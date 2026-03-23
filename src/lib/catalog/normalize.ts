@@ -72,6 +72,7 @@ export function normalizeVariation(
     currency: normalizeCurrencyCode(variation.currency),
     availability: asBoolean(variation.out_of_stock) ? "out_of_stock" : "in_stock",
     selects: variation.selects || (name ? { Name: name } : {}),
+    heroImage: variation.image || null,
     projectOverrideBasePrice: overrideBasePrice,
   };
 }

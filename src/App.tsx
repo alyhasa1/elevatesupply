@@ -24,49 +24,49 @@ import { CreateAccountPage, ForgotPasswordPage, ResetPasswordPage, SignInPage } 
 export default function App() {
   return (
     <AuthProvider>
-      <CatalogProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/auth/sign-in" element={<SignInPage />} />
-            <Route path="/auth/create-account" element={<CreateAccountPage />} />
-            <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/auth/sign-in" element={<SignInPage />} />
+          <Route path="/auth/create-account" element={<CreateAccountPage />} />
+          <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
 
-            <Route path="/" element={<StorefrontLayout />}>
-              <Route index element={<Home />} />
-              <Route path="/catalog" element={<Catalog />} />
-              <Route path="/product/:trackerId/:listingId" element={<ProductDetail />} />
-              <Route
-                path="/orders"
-                element={
-                  <RequireAuth>
-                    <OrderHistory />
-                  </RequireAuth>
-                }
-              />
-              <Route path="category/:slug" element={<Navigate to="/catalog" replace />} />
-            </Route>
-
+          <Route path="/" element={<StorefrontLayout />}>
+            <Route index element={<Home />} />
+            <Route path="/catalog" element={<Catalog />} />
+            <Route path="/product/:trackerId/:listingId" element={<ProductDetail />} />
             <Route
-              path="/admin"
+              path="/orders"
               element={
-                <RequireAdmin>
-                  <AdminLayout />
-                </RequireAdmin>
+                <RequireAuth>
+                  <OrderHistory />
+                </RequireAuth>
               }
-            >
-              <Route index element={<Dashboard />} />
-              <Route path="products" element={<Products />} />
-              <Route path="orders" element={<Orders />} />
-              <Route path="accounts" element={<Accounts />} />
-            </Route>
+            />
+            <Route path="category/:slug" element={<Navigate to="/catalog" replace />} />
+          </Route>
 
-            <Route path="/paypal/return" element={<PayPalReturn />} />
+          <Route
+            path="/admin"
+            element={
+              <RequireAdmin>
+                <CatalogProvider>
+                  <AdminLayout />
+                </CatalogProvider>
+              </RequireAdmin>
+            }
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="products" element={<Products />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="accounts" element={<Accounts />} />
+          </Route>
 
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
-      </CatalogProvider>
+          <Route path="/paypal/return" element={<PayPalReturn />} />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
     </AuthProvider>
   );
 }

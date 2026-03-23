@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
-    "test": "node --test --import tsx src/lib/catalog/pricing.test.ts src/lib/catalog/format.test.ts src/lib/catalog/normalize.test.ts src/lib/catalog/apiConfig.test.ts src/lib/catalog/adminCatalog.test.ts src/lib/catalog/variationSelection.test.ts src/lib/catalog/imageProxy.test.ts src/lib/siteScope.test.ts src/lib/authRedirects.test.ts src/lib/catalog/requestAuth.test.ts src/lib/orders/trackerOrderSource.test.ts src/lib/orders/paypalReturnMessage.test.ts src/lib/orders/siteFilters.test.ts src/lib/orders/adminOrderStats.test.ts src/components/orders/OrderFormModal.test.tsx"
+    "test": "node --test --import tsx src/lib/catalog/pricing.test.ts src/lib/catalog/format.test.ts src/lib/catalog/normalize.test.ts src/lib/catalog/apiConfig.test.ts src/lib/catalog/adminCatalog.test.ts src/lib/catalog/publicCatalog.test.ts src/lib/catalog/contentOverrides.test.ts src/lib/catalog/variationSelection.test.ts src/lib/catalog/imageProxy.test.ts src/lib/siteScope.test.ts src/lib/authRedirects.test.ts src/lib/catalog/requestAuth.test.ts src/lib/orders/trackerOrderSource.test.ts src/lib/orders/paypalReturnMessage.test.ts src/lib/orders/siteFilters.test.ts src/lib/orders/adminOrderStats.test.ts src/components/orders/OrderFormModal.test.tsx"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

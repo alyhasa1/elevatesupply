@@ -1,4 +1,12 @@
 import {
+  buildVariationMediaOverrideKey,
+  applyCatalogContentOverrides,
+} from "../../../src/lib/catalog/contentOverrides";
+import {
+  buildHomeCatalogPayload,
+  buildPublicCatalogPage,
+} from "../../../src/lib/catalog/publicCatalog";
+import {
   makeListingKey,
   makeVariationKey,
   normalizeJacketCatalogProduct,
@@ -10,7 +18,16 @@ import { buildAdminCatalogPage } from "../../../src/lib/catalog/adminCatalog";
 import { proxyCatalogProductImages, proxyCatalogSnapshotImages } from "../../../src/lib/catalog/imageProxy";
 import { createAccountBuildingProduct } from "../../../src/lib/catalog/static";
 import { TRACKERS, getTrackerDefinition } from "../../../src/lib/catalog/trackers";
-import type { BaseListingRecord, BaseVariationRecord, CatalogProduct, CatalogSnapshot, TrackerId } from "../../../src/lib/catalog/types";
+import type {
+  BaseListingRecord,
+  BaseVariationRecord,
+  CatalogProduct,
+  CatalogSnapshot,
+  ListingContentOverride,
+  PublicCatalogPageQuery,
+  TrackerId,
+  VariationMediaOverrideMap,
+} from "../../../src/lib/catalog/types";
 
 type D1Value = string | number | null;
 
@@ -60,6 +77,7 @@ interface JacketVariationRow {
   currency?: string | null;
   out_of_stock?: boolean | number | null;
   selects?: string | Record<string, string> | null;
+  hero_image?: string | null;
   created_at?: string | null;
   updated_at?: string | null;
 }
@@ -97,6 +115,21 @@ interface ShippingOverrideRow {
   tracker_id: TrackerId;
   listing_id: string;
   shipping_price: number;
+}
+
+interface ListingContentOverrideRow {
+  tracker_id: TrackerId;
+  listing_id: string;
+  description?: string | null;
+  image?: string | null;
+  images?: string | null;
+}
+
+interface VariationMediaOverrideRow {
+  tracker_id: TrackerId;
+  listing_id: string;
+  variation_id: string;
+  hero_image?: string | null;
 }
 
 interface AdminUser {
@@ -285,6 +318,62 @@ async function getOverrideMaps(env: Env): Promise<LiveCatalogOverrideMaps> {
   };
 }
 
+async function getContentOverrideMaps(env: Env): Promise<{
+  listingContentOverrides: Map<string, ListingContentOverride>;
+  variationMediaOverrides: VariationMediaOverrideMap;
+}> {
+  const [listingRows, variationRows] = await Promise.all([
+    env.DB.prepare(
+      "SELECT tracker_id, listing_id, description, image, images FROM project_listing_content_overrides",
+    ).all<ListingContentOverrideRow>(),
+    env.DB.prepare(
+      "SELECT tracker_id, listing_id, variation_id, hero_image FROM project_variation_media_overrides",
+    ).all<VariationMediaOverrideRow>(),
+  ]);
+
+  return {
+    listingContentOverrides: new Map(
+      (listingRows.results || []).map((row) => [
+        makeListingKey(row.tracker_id, row.listing_id),
+        {
+          trackerId: row.tracker_id,
+          listingId: row.listing_id,
+          description: row.description ?? null,
+          image: row.image ?? null,
+          images: parseMaybeJson<string[] | null>(row.images, null),
+        },
+      ]),
+    ),
+    variationMediaOverrides: new Map(
+      (variationRows.results || []).map((row) => [
+        buildVariationMediaOverrideKey(row.tracker_id, row.variation_id),
+        {
+          heroImage: row.hero_image ?? null,
+        },
+      ]),
+    ),
+  };
+}
+
+function applySnapshotContentOverrides(
+  snapshot: CatalogSnapshot,
+  listingContentOverrides: Map<string, ListingContentOverride>,
+  variationMediaOverrides: VariationMediaOverrideMap,
+  options: { publicView: boolean },
+): CatalogSnapshot {
+  return {
+    ...snapshot,
+    products: snapshot.products.map((product) =>
+      applyCatalogContentOverrides(
+        product,
+        listingContentOverrides.get(makeListingKey(product.trackerId, product.listingId)) || null,
+        variationMediaOverrides,
+        options,
+      ),
+    ),
+  };
+}
+
 async function fetchLiveTrackerCatalog(
   trackerId: LiveTrackerId,
   env: Env,
@@ -316,6 +405,7 @@ async function fetchJacketCatalog(env: Env): Promise<CatalogProduct[]> {
       currency: variation.currency || "GBP",
       out_of_stock: variation.out_of_stock,
       selects: parseMaybeJson<Record<string, string>>(variation.selects, {}),
+      image: variation.hero_image || null,
     });
     variationMap.set(variation.listing_id, group);
   }
@@ -351,8 +441,11 @@ function sortProducts(products: CatalogProduct[]): CatalogProduct[] {
   });
 }
 
-async function buildSnapshot(env: Env): Promise<CatalogSnapshot> {
-  const overrides = await getOverrideMaps(env);
+async function buildSnapshot(env: Env, options: { publicView: boolean } = { publicView: false }): Promise<CatalogSnapshot> {
+  const [overrides, contentOverrides] = await Promise.all([
+    getOverrideMaps(env),
+    getContentOverrideMaps(env),
+  ]);
   const [tims, tiktok, wholesale, jackets] = await Promise.all([
     fetchLiveTrackerCatalog("tims_textile", env, overrides),
     fetchLiveTrackerCatalog("tiktok_ds", env, overrides),
@@ -360,11 +453,11 @@ async function buildSnapshot(env: Env): Promise<CatalogSnapshot> {
     fetchJacketCatalog(env),
   ]);
 
-  return {
+  return applySnapshotContentOverrides({
     trackers: TRACKERS,
     products: sortProducts([...tims, ...tiktok, ...wholesale, ...jackets, createAccountBuildingProduct()]),
     updatedAt: new Date().toISOString(),
-  };
+  }, contentOverrides.listingContentOverrides, contentOverrides.variationMediaOverrides, options);
 }
 
 function findProduct(snapshot: CatalogSnapshot, trackerId: TrackerId, listingId: string): CatalogProduct | null {
@@ -420,6 +513,7 @@ async function updateJacketVariation(env: Env, variationId: string, patch: Recor
   if (patch.base_price !== undefined) push("base_price", Number(patch.base_price) || 0);
   if (patch.out_of_stock !== undefined) push("out_of_stock", patch.out_of_stock ? 1 : 0);
   if (patch.selects !== undefined) push("selects", JSON.stringify(patch.selects || {}));
+  if (patch.hero_image !== undefined) push("hero_image", patch.hero_image ? String(patch.hero_image) : null);
   if (updates.length === 0) throw new Error("No jacket variation fields provided");
 
   push("updated_at", new Date().toISOString());
@@ -429,6 +523,116 @@ async function updateJacketVariation(env: Env, variationId: string, patch: Recor
   )
     .bind(...values)
     .run();
+}
+
+async function getListingContentOverride(
+  env: Env,
+  trackerId: LiveTrackerId,
+  listingId: string,
+): Promise<ListingContentOverride | null> {
+  const row = await env.DB.prepare(
+    "SELECT tracker_id, listing_id, description, image, images FROM project_listing_content_overrides WHERE tracker_id = ?1 AND listing_id = ?2",
+  )
+    .bind(trackerId, listingId)
+    .first<ListingContentOverrideRow>();
+
+  if (!row) return null;
+
+  return {
+    trackerId: row.tracker_id,
+    listingId: row.listing_id,
+    description: row.description ?? null,
+    image: row.image ?? null,
+    images: parseMaybeJson<string[] | null>(row.images, null),
+  };
+}
+
+async function upsertListingContentOverride(
+  env: Env,
+  trackerId: LiveTrackerId,
+  listingId: string,
+  patch: {
+    description?: string;
+    image?: string | null;
+    images?: string[] | null;
+    clearDescription?: boolean;
+    clearImages?: boolean;
+  },
+): Promise<void> {
+  const existing = await getListingContentOverride(env, trackerId, listingId);
+  const nextDescription = patch.clearDescription
+    ? null
+    : patch.description !== undefined
+      ? String(patch.description)
+      : existing?.description ?? null;
+
+  const nextImage = patch.clearImages
+    ? null
+    : patch.image !== undefined
+      ? patch.image ? String(patch.image) : null
+      : existing?.image ?? null;
+
+  const nextImages = patch.clearImages
+    ? null
+    : patch.images !== undefined
+      ? patch.images
+      : existing?.images ?? null;
+
+  const hasContent = Boolean(nextDescription !== null || nextImage !== null || (nextImages && nextImages.length > 0));
+  if (!hasContent) {
+    await deleteRow(
+      env,
+      "DELETE FROM project_listing_content_overrides WHERE tracker_id = ?1 AND listing_id = ?2",
+      trackerId,
+      listingId,
+    );
+    return;
+  }
+
+  await upsertRow(
+    env,
+    `INSERT INTO project_listing_content_overrides (tracker_id, listing_id, description, image, images, updated_at)
+     VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+     ON CONFLICT(tracker_id, listing_id)
+     DO UPDATE SET description = excluded.description, image = excluded.image, images = excluded.images, updated_at = excluded.updated_at`,
+    trackerId,
+    listingId,
+    nextDescription,
+    nextImage,
+    nextImages ? JSON.stringify(nextImages) : null,
+    new Date().toISOString(),
+  );
+}
+
+async function upsertVariationMediaOverride(
+  env: Env,
+  trackerId: LiveTrackerId,
+  listingId: string,
+  variationId: string,
+  patch: { heroImage?: string | null; clearOverride?: boolean },
+): Promise<void> {
+  if (patch.clearOverride || !patch.heroImage) {
+    await deleteRow(
+      env,
+      "DELETE FROM project_variation_media_overrides WHERE tracker_id = ?1 AND variation_id = ?2",
+      trackerId,
+      variationId,
+    );
+    return;
+  }
+
+  await upsertRow(
+    env,
+    `INSERT INTO project_variation_media_overrides (tracker_id, listing_id, variation_id, hero_image, updated_at)
+     VALUES (?1, ?2, ?3, ?4, ?5)
+     ON CONFLICT(tracker_id, variation_id)
+     DO UPDATE SET listing_id = excluded.listing_id, hero_image = excluded.hero_image, updated_at = excluded.updated_at`,
+    trackerId,
+    listingId,
+    variationId,
+    String(patch.heroImage),
+    new Date().toISOString(),
+  );
 }
 
 export default {
@@ -444,8 +648,24 @@ export default {
     try {
       if (path === "/health") return jsonResponse(request, env, { status: "ok", service: "elevate-catalog-worker" });
       if (path === "/trackers" && request.method === "GET") return jsonResponse(request, env, TRACKERS);
+      if (path === "/home" && request.method === "GET") {
+        const snapshot = withProxiedSnapshot(await buildSnapshot(env, { publicView: true }), request);
+        return jsonResponse(request, env, buildHomeCatalogPayload(snapshot));
+      }
       if (path === "/catalog" && request.method === "GET") {
-        return jsonResponse(request, env, withProxiedSnapshot(await buildSnapshot(env), request));
+        return jsonResponse(request, env, withProxiedSnapshot(await buildSnapshot(env, { publicView: true }), request));
+      }
+
+      if (path === "/catalog-page" && request.method === "GET") {
+        const snapshot = withProxiedSnapshot(await buildSnapshot(env, { publicView: true }), request);
+        const query: Partial<PublicCatalogPageQuery> = {
+          page: Number(url.searchParams.get("page") || 1),
+          pageSize: Number(url.searchParams.get("pageSize") || 24),
+          q: url.searchParams.get("q") || "",
+          tracker: (url.searchParams.get("tracker") as PublicCatalogPageQuery["tracker"]) || "all",
+          availability: (url.searchParams.get("availability") as PublicCatalogPageQuery["availability"]) || "all",
+        };
+        return jsonResponse(request, env, buildPublicCatalogPage(snapshot, query));
       }
 
       if (path === "/img" && request.method === "GET") {
@@ -484,7 +704,7 @@ export default {
 
       if (path === "/admin/catalog" && request.method === "GET") {
         await verifyAdminRequest(request, env);
-        const snapshot = await buildSnapshot(env);
+        const snapshot = await buildSnapshot(env, { publicView: false });
         const query: AdminCatalogQueryInput = {
           page: url.searchParams.get("page"),
           pageSize: url.searchParams.get("pageSize"),
@@ -497,7 +717,7 @@ export default {
       if (path.startsWith("/catalog/") && request.method === "GET") {
         const trackerId = toTrackerId(path.replace("/catalog/", ""));
         if (!trackerId) return jsonResponse(request, env, { error: "Unknown tracker" }, { status: 404 });
-        const snapshot = withProxiedSnapshot(await buildSnapshot(env), request);
+        const snapshot = withProxiedSnapshot(await buildSnapshot(env, { publicView: true }), request);
         return jsonResponse(request, env, {
           ...snapshot,
           tracker: getTrackerDefinition(trackerId),
@@ -510,7 +730,7 @@ export default {
         const trackerId = toTrackerId(trackerSegment || "");
         const listingId = decodeURIComponent(listingSegments.join("/"));
         if (!trackerId || !listingId) return jsonResponse(request, env, { error: "Unknown product" }, { status: 404 });
-        const snapshot = await buildSnapshot(env);
+        const snapshot = await buildSnapshot(env, { publicView: true });
         const product = findProduct(snapshot, trackerId, listingId);
         return product
           ? jsonResponse(request, env, withProxiedProduct(product, request))
@@ -593,6 +813,77 @@ export default {
         return jsonResponse(request, env, { success: true, product: findProduct(snapshot, "wholesale_items", body.listingId) });
       }
 
+      if (path === "/admin/content/listing" && request.method === "PATCH") {
+        const user = await verifyAdminRequest(request, env);
+        const body = await parseJsonBody<{
+          trackerId: TrackerId;
+          listingId: string;
+          description?: string;
+          image?: string | null;
+          images?: string[] | null;
+          clearDescription?: boolean;
+          clearImages?: boolean;
+        }>(request);
+
+        if (body.trackerId === "account_building") {
+          return jsonResponse(request, env, { error: "Account Building is read only" }, { status: 400 });
+        }
+
+        if (body.trackerId === "pakistani_jackets") {
+          await updateJacketListing(env, body.listingId, {
+            description: body.clearDescription ? "" : body.description,
+            image: body.clearImages ? null : body.image,
+            images: body.clearImages ? [] : body.images,
+          });
+        } else if (LIVE_TRACKERS.includes(body.trackerId as LiveTrackerId)) {
+          await upsertListingContentOverride(env, body.trackerId as LiveTrackerId, body.listingId, {
+            description: body.description,
+            image: body.image,
+            images: body.images ?? null,
+            clearDescription: body.clearDescription,
+            clearImages: body.clearImages,
+          });
+        } else {
+          return jsonResponse(request, env, { error: "Unsupported tracker for content editing" }, { status: 400 });
+        }
+
+        await writeAuditLog(env, user, "project_listing_content_override", body.trackerId, body.listingId, null, body);
+        const snapshot = await buildSnapshot(env, { publicView: false });
+        return jsonResponse(request, env, { success: true, product: findProduct(snapshot, body.trackerId, body.listingId) });
+      }
+
+      if (path === "/admin/content/variation-image" && request.method === "PATCH") {
+        const user = await verifyAdminRequest(request, env);
+        const body = await parseJsonBody<{
+          trackerId: TrackerId;
+          listingId: string;
+          variationId: string;
+          heroImage?: string | null;
+          clearOverride?: boolean;
+        }>(request);
+
+        if (body.trackerId === "account_building") {
+          return jsonResponse(request, env, { error: "Account Building is read only" }, { status: 400 });
+        }
+
+        if (body.trackerId === "pakistani_jackets") {
+          await updateJacketVariation(env, body.variationId, {
+            hero_image: body.clearOverride ? null : body.heroImage,
+          });
+        } else if (LIVE_TRACKERS.includes(body.trackerId as LiveTrackerId)) {
+          await upsertVariationMediaOverride(env, body.trackerId as LiveTrackerId, body.listingId, body.variationId, {
+            heroImage: body.heroImage,
+            clearOverride: body.clearOverride,
+          });
+        } else {
+          return jsonResponse(request, env, { error: "Unsupported tracker for variation images" }, { status: 400 });
+        }
+
+        await writeAuditLog(env, user, "project_variation_media_override", body.trackerId, body.listingId, body.variationId, body);
+        const snapshot = await buildSnapshot(env, { publicView: false });
+        return jsonResponse(request, env, { success: true, product: findProduct(snapshot, body.trackerId, body.listingId) });
+      }
+
       if (path.startsWith("/admin/jackets/listings/") && request.method === "PATCH") {
         const user = await verifyAdminRequest(request, env);
         const listingId = decodeURIComponent(path.replace("/admin/jackets/listings/", ""));
@@ -644,10 +935,10 @@ export default {
             variations += 1;
             await upsertRow(
               env,
-              `INSERT INTO pakistani_jackets_variations (id, listing_id, var_id, name, currency, base_price, out_of_stock, selects, created_at, updated_at)
-               VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
-               ON CONFLICT(id)
-               DO UPDATE SET listing_id = excluded.listing_id, var_id = excluded.var_id, name = excluded.name, currency = excluded.currency, base_price = excluded.base_price, out_of_stock = excluded.out_of_stock, selects = excluded.selects, updated_at = excluded.updated_at`,
+              `INSERT INTO pakistani_jackets_variations (id, listing_id, var_id, name, currency, base_price, out_of_stock, selects, hero_image, created_at, updated_at)
+               VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)
+                ON CONFLICT(id)
+               DO UPDATE SET listing_id = excluded.listing_id, var_id = excluded.var_id, name = excluded.name, currency = excluded.currency, base_price = excluded.base_price, out_of_stock = excluded.out_of_stock, selects = excluded.selects, hero_image = excluded.hero_image, updated_at = excluded.updated_at`,
               String(variation.id),
               String(variation.listing_id || listing.listing_id),
               String(variation.var_id || ""),
@@ -656,6 +947,7 @@ export default {
               Number(variation.price) || 0,
               variation.out_of_stock ? 1 : 0,
               JSON.stringify(variation.selects || {}),
+              variation.hero_image ? String(variation.hero_image) : null,
               String(variation.created_at || listing.updated_at || new Date().toISOString()),
               String(variation.updated_at || listing.updated_at || new Date().toISOString()),
             );

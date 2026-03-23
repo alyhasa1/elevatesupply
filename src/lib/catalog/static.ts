@@ -43,6 +43,7 @@ export function createAccountBuildingProduct(): CatalogProduct {
         currency: "GBP",
         availability: "in_stock",
         selects: { Variant: "Standard" },
+        heroImage: null,
         projectOverrideBasePrice: null,
       },
     ],

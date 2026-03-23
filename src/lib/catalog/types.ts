@@ -6,6 +6,7 @@ export type TrackerId =
   | "account_building";
 
 export type Availability = "in_stock" | "out_of_stock" | "ended";
+export type CatalogAvailabilityFilter = "all" | Availability;
 
 export interface TrackerDefinition {
   id: TrackerId;
@@ -25,6 +26,7 @@ export interface CatalogVariation {
   currency: string;
   availability: Availability;
   selects: Record<string, string>;
+  heroImage: string | null;
   projectOverrideBasePrice: number | null;
 }
 
@@ -58,6 +60,35 @@ export interface CatalogSnapshot {
   updatedAt: string;
 }
 
+export interface HomeCatalogPayload {
+  trackers: TrackerDefinition[];
+  featuredProducts: CatalogProduct[];
+  recentProducts: CatalogProduct[];
+  liveCount: number;
+  updatedAt: string;
+}
+
+export interface PublicCatalogPageQuery {
+  page: number;
+  pageSize: number;
+  q: string;
+  tracker: TrackerId | "all";
+  availability: CatalogAvailabilityFilter;
+}
+
+export interface PublicCatalogPage {
+  trackers: TrackerDefinition[];
+  products: CatalogProduct[];
+  updatedAt: string;
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+  query: PublicCatalogPageQuery;
+}
+
 export interface AdminCatalogPageQuery {
   page: number;
   pageSize: number;
@@ -87,6 +118,7 @@ export interface BaseVariationRecord {
   out_of_stock?: boolean | number | null;
   selects?: Record<string, string> | null;
   name?: string | null;
+  image?: string | null;
 }
 
 export interface BaseListingRecord<TVariation extends BaseVariationRecord = BaseVariationRecord> {
@@ -106,3 +138,20 @@ export interface BaseListingRecord<TVariation extends BaseVariationRecord = Base
   scraped_at?: string | null;
   variations?: TVariation[] | null;
 }
+
+export interface ListingContentOverride {
+  trackerId: TrackerId;
+  listingId: string;
+  description?: string | null;
+  image?: string | null;
+  images?: string[] | null;
+}
+
+export interface VariationMediaOverride {
+  trackerId: TrackerId;
+  listingId: string;
+  variationId: string;
+  heroImage?: string | null;
+}
+
+export type VariationMediaOverrideMap = Map<string, Pick<VariationMediaOverride, "heroImage">>;

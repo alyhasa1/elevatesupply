@@ -1,7 +1,14 @@
 import { TRACKERS } from "./trackers";
 import { buildCatalogApiUrl, normalizeCatalogApiBase } from "./apiConfig";
 import { buildCatalogAuthHeaders } from "./requestAuth";
-import type { AdminCatalogPage, CatalogProduct, CatalogSnapshot, TrackerId } from "./types";
+import type {
+  AdminCatalogPage,
+  CatalogProduct,
+  CatalogSnapshot,
+  HomeCatalogPayload,
+  PublicCatalogPage,
+  TrackerId,
+} from "./types";
 
 const API_BASE = normalizeCatalogApiBase(import.meta.env.VITE_ELEVATE_CATALOG_API_URL);
 
@@ -54,8 +61,61 @@ export function createEmptyAdminCatalogPage(): AdminCatalogPage {
   };
 }
 
+export function createEmptyHomeCatalogPayload(): HomeCatalogPayload {
+  return {
+    trackers: TRACKERS,
+    featuredProducts: [],
+    recentProducts: [],
+    liveCount: 0,
+    updatedAt: new Date(0).toISOString(),
+  };
+}
+
+export function createEmptyPublicCatalogPage(): PublicCatalogPage {
+  return {
+    trackers: TRACKERS,
+    products: [],
+    updatedAt: new Date(0).toISOString(),
+    total: 0,
+    page: 1,
+    pageSize: 24,
+    totalPages: 1,
+    hasPreviousPage: false,
+    hasNextPage: false,
+    query: {
+      page: 1,
+      pageSize: 24,
+      q: "",
+      tracker: "all",
+      availability: "all",
+    },
+  };
+}
+
 export async function fetchCatalogSnapshot(): Promise<CatalogSnapshot> {
   return requestJson<CatalogSnapshot>("/catalog");
+}
+
+export async function fetchHomeCatalog(): Promise<HomeCatalogPayload> {
+  return requestJson<HomeCatalogPayload>("/home");
+}
+
+export async function fetchPublicCatalogPage(params: {
+  page?: number;
+  pageSize?: number;
+  q?: string;
+  tracker?: TrackerId | "all";
+  availability?: "all" | "in_stock" | "out_of_stock" | "ended";
+}): Promise<PublicCatalogPage> {
+  const searchParams = new URLSearchParams();
+  if (params.page) searchParams.set("page", String(params.page));
+  if (params.pageSize) searchParams.set("pageSize", String(params.pageSize));
+  if (params.q) searchParams.set("q", params.q);
+  if (params.tracker && params.tracker !== "all") searchParams.set("tracker", params.tracker);
+  if (params.availability && params.availability !== "all") searchParams.set("availability", params.availability);
+
+  const suffix = searchParams.toString();
+  return requestJson<PublicCatalogPage>(`/catalog-page${suffix ? `?${suffix}` : ""}`);
 }
 
 export async function fetchAdminCatalogPage(
@@ -183,5 +243,45 @@ export async function patchJacketVariation(
         body: JSON.stringify(payload),
       },
     ),
+  );
+}
+
+export async function patchListingContent(
+  token: string,
+  payload: {
+    trackerId: TrackerId;
+    listingId: string;
+    description?: string;
+    image?: string | null;
+    images?: string[] | null;
+    clearDescription?: boolean;
+    clearImages?: boolean;
+  },
+) {
+  return requestJson<{ success: boolean; product: CatalogProduct | null }>(
+    "/admin/content/listing",
+    withBearer(token, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
+  );
+}
+
+export async function patchVariationHeroImage(
+  token: string,
+  payload: {
+    trackerId: TrackerId;
+    listingId: string;
+    variationId: string;
+    heroImage?: string | null;
+    clearOverride?: boolean;
+  },
+) {
+  return requestJson<{ success: boolean; product: CatalogProduct | null }>(
+    "/admin/content/variation-image",
+    withBearer(token, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
   );
 }

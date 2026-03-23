@@ -15,6 +15,7 @@ function makeVariation(id: string, selects: Record<string, string>, overrides: P
     currency: "GBP",
     availability: "in_stock",
     selects,
+    heroImage: null,
     projectOverrideBasePrice: null,
     ...overrides,
   };
