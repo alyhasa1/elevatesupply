@@ -5,6 +5,8 @@ import {
 import {
   buildHomeCatalogPayload,
   buildPublicCatalogPage,
+  toPublicCatalogProduct,
+  toPublicCatalogSnapshot,
 } from "../../../src/lib/catalog/publicCatalog";
 import {
   makeListingKey,
@@ -653,7 +655,11 @@ export default {
         return jsonResponse(request, env, buildHomeCatalogPayload(snapshot));
       }
       if (path === "/catalog" && request.method === "GET") {
-        return jsonResponse(request, env, withProxiedSnapshot(await buildSnapshot(env, { publicView: true }), request));
+        return jsonResponse(
+          request,
+          env,
+          toPublicCatalogSnapshot(withProxiedSnapshot(await buildSnapshot(env, { publicView: true }), request)),
+        );
       }
 
       if (path === "/catalog-page" && request.method === "GET") {
@@ -717,7 +723,7 @@ export default {
       if (path.startsWith("/catalog/") && request.method === "GET") {
         const trackerId = toTrackerId(path.replace("/catalog/", ""));
         if (!trackerId) return jsonResponse(request, env, { error: "Unknown tracker" }, { status: 404 });
-        const snapshot = withProxiedSnapshot(await buildSnapshot(env, { publicView: true }), request);
+        const snapshot = toPublicCatalogSnapshot(withProxiedSnapshot(await buildSnapshot(env, { publicView: true }), request));
         return jsonResponse(request, env, {
           ...snapshot,
           tracker: getTrackerDefinition(trackerId),
@@ -733,7 +739,7 @@ export default {
         const snapshot = await buildSnapshot(env, { publicView: true });
         const product = findProduct(snapshot, trackerId, listingId);
         return product
-          ? jsonResponse(request, env, withProxiedProduct(product, request))
+          ? jsonResponse(request, env, toPublicCatalogProduct(withProxiedProduct(product, request)))
           : jsonResponse(request, env, { error: "Product not found" }, { status: 404 });
       }
 

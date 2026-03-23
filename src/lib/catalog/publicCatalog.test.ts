@@ -102,3 +102,26 @@ test("buildHomeCatalogPayload returns a curated storefront slice and live count"
   assert.equal(payload.liveCount, 2);
   assert.equal(payload.updatedAt, snapshot.updatedAt);
 });
+
+test("public catalog payloads do not expose admin-only override fields", () => {
+  const page = buildPublicCatalogPage(snapshot, {
+    tracker: "all",
+    q: "",
+    availability: "all",
+    page: 1,
+    pageSize: 24,
+  });
+  const payload = buildHomeCatalogPayload(snapshot);
+
+  const publicProduct = page.products[0];
+  const publicVariation = publicProduct?.variations[0];
+  const featuredProduct = payload.featuredProducts[0];
+
+  assert.equal(Object.hasOwn(publicProduct || {}, "projectOverrideBasePrice"), false);
+  assert.equal(Object.hasOwn(publicProduct || {}, "projectOverrideShippingPrice"), false);
+  assert.equal(Object.hasOwn(publicProduct || {}, "adminEditable"), false);
+  assert.equal(Object.hasOwn(publicVariation || {}, "projectOverrideBasePrice"), false);
+  assert.equal(Object.hasOwn(featuredProduct || {}, "projectOverrideBasePrice"), false);
+  assert.equal(Object.hasOwn(featuredProduct || {}, "projectOverrideShippingPrice"), false);
+  assert.equal(Object.hasOwn(featuredProduct || {}, "adminEditable"), false);
+});

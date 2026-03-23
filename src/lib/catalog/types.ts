@@ -27,7 +27,7 @@ export interface CatalogVariation {
   availability: Availability;
   selects: Record<string, string>;
   heroImage: string | null;
-  projectOverrideBasePrice: number | null;
+  projectOverrideBasePrice?: number | null;
 }
 
 export interface CatalogProduct {
@@ -49,9 +49,9 @@ export interface CatalogProduct {
   handlingNote: string | null;
   updatedAt: string | null;
   variations: CatalogVariation[];
-  projectOverrideBasePrice: number | null;
-  projectOverrideShippingPrice: number | null;
-  adminEditable: boolean;
+  projectOverrideBasePrice?: number | null;
+  projectOverrideShippingPrice?: number | null;
+  adminEditable?: boolean;
 }
 
 export interface CatalogSnapshot {

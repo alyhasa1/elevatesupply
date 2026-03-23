@@ -2,6 +2,7 @@ import { TRACKERS } from "./trackers";
 import type {
   CatalogAvailabilityFilter,
   CatalogProduct,
+  CatalogVariation,
   CatalogSnapshot,
   HomeCatalogPayload,
   PublicCatalogPage,
@@ -50,6 +51,33 @@ function filterProducts(products: CatalogProduct[], query: PublicCatalogPageQuer
   });
 }
 
+function toPublicCatalogVariation(variation: CatalogVariation): CatalogVariation {
+  const { projectOverrideBasePrice: _projectOverrideBasePrice, ...publicVariation } = variation;
+  return publicVariation;
+}
+
+export function toPublicCatalogProduct(product: CatalogProduct): CatalogProduct {
+  const {
+    projectOverrideBasePrice: _projectOverrideBasePrice,
+    projectOverrideShippingPrice: _projectOverrideShippingPrice,
+    adminEditable: _adminEditable,
+    variations,
+    ...publicProduct
+  } = product;
+
+  return {
+    ...publicProduct,
+    variations: variations.map((variation) => toPublicCatalogVariation(variation)),
+  };
+}
+
+export function toPublicCatalogSnapshot(snapshot: CatalogSnapshot): CatalogSnapshot {
+  return {
+    ...snapshot,
+    products: snapshot.products.map((product) => toPublicCatalogProduct(product)),
+  };
+}
+
 export function normalizePublicCatalogQuery(input: Partial<PublicCatalogPageQuery>): PublicCatalogPageQuery {
   return {
     page: normalizePage(input.page),
@@ -75,7 +103,7 @@ export function buildPublicCatalogPage(
   return {
     trackers: snapshot.trackers,
     updatedAt: snapshot.updatedAt,
-    products,
+    products: products.map((product) => toPublicCatalogProduct(product)),
     total,
     page,
     pageSize: query.pageSize,
@@ -99,8 +127,8 @@ export function buildHomeCatalogPayload(snapshot: CatalogSnapshot): HomeCatalogP
 
   return {
     trackers: snapshot.trackers,
-    featuredProducts,
-    recentProducts: secondaryProducts.slice(0, 4),
+    featuredProducts: featuredProducts.map((product) => toPublicCatalogProduct(product)),
+    recentProducts: secondaryProducts.slice(0, 4).map((product) => toPublicCatalogProduct(product)),
     liveCount: snapshot.products.filter((product) => product.availability === "in_stock").length,
     updatedAt: snapshot.updatedAt,
   };
