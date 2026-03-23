@@ -1,0 +1,18 @@
+name = "elevate-catalog-worker"
+main = "src/index.ts"
+compatibility_date = "2026-03-19"
+compatibility_flags = ["global_fetch_strictly_public"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "elevate-catalog"
+database_id = "3c4f6ad4-619f-4832-a76f-f4bc418f79fb"
+
+[vars]
+TIMS_TEXTILE_API_URL = "https://api.ecomwithyasir.com"
+TIKTOK_DS_API_URL = "https://tiktok-stock-sync.yasir-kayani2001.workers.dev"
+WHOLESALE_ITEMS_API_URL = "https://wholesale-sync.yasir-kayani2001.workers.dev"
+ALLOWED_ORIGINS = ""
+SUPABASE_URL = "https://xdarswpqooznozsdalgy.supabase.co"
+SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkYXJzd3Bxb296bm96c2RhbGd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2MDQ0NjQsImV4cCI6MjA3NjE4MDQ2NH0.8P38gzTH75Ax9I1RaDq6VfpS9fcKEI82ZlLmsFuofdo"
+# Set via `wrangler secret put SUPABASE_SERVICE_ROLE_KEY`
