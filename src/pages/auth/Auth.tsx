@@ -91,7 +91,7 @@ export function SignInPage() {
   return (
     <AuthShell
       title="Sign in"
-      subtitle="Use the same shared account that already works on Ecom With Yasir. Admin access carries over automatically."
+      subtitle="Use the same shared account that already works on Ecom With Yasir."
     >
       <form className="space-y-5" onSubmit={onSubmit}>
         <Field label="Email">
