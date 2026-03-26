@@ -131,10 +131,10 @@ export default function StorefrontLayout() {
         <Outlet />
       </main>
 
-      <footer className="bg-stone-950 text-stone-400 py-20 mt-20 border-t border-stone-900">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <footer className="bg-stone-950 text-stone-400 py-12 mt-12 border-t border-stone-900">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center space-x-3 mb-6 group">
+            <Link to="/" className="flex items-center space-x-3 mb-4 group">
               <div className="w-9 h-9 bg-rose-900 rounded-lg flex items-center justify-center shadow-lg shadow-rose-900/20 group-hover:bg-rose-800 transition-colors">
                 <Package className="w-5 h-5 text-white" />
               </div>
@@ -148,8 +148,8 @@ export default function StorefrontLayout() {
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-6 tracking-wide uppercase text-xs">Categories</h4>
-            <ul className="space-y-4 text-sm">
+            <h4 className="text-white font-semibold mb-4 tracking-wide uppercase text-xs">Categories</h4>
+            <ul className="space-y-3 text-sm">
               {TRACKERS.slice(0, 5).map(tracker => (
                 <li key={tracker.id}>
                   <Link to={`/catalog?tracker=${tracker.id}`} className="hover:text-rose-400 transition-colors">
@@ -161,8 +161,8 @@ export default function StorefrontLayout() {
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-6 tracking-wide uppercase text-xs">Company</h4>
-            <ul className="space-y-4 text-sm">
+            <h4 className="text-white font-semibold mb-4 tracking-wide uppercase text-xs">Company</h4>
+            <ul className="space-y-3 text-sm">
               <li>
                 <Link to="/catalog" className="hover:text-rose-400 transition-colors">
                   All Products
@@ -181,7 +181,7 @@ export default function StorefrontLayout() {
             </ul>
           </div>
         </div>
-        <div className="container mx-auto px-4 mt-20 pt-8 border-t border-stone-900 text-xs flex flex-col md:flex-row justify-between items-center text-stone-500">
+        <div className="container mx-auto px-4 mt-12 pt-6 border-t border-stone-900 text-xs flex flex-col md:flex-row justify-between items-center text-stone-500">
           <p>&copy; {new Date().getFullYear()} Elevate Supply Ltd. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0 font-medium tracking-wide">
             <span>UK Dropshipping</span>

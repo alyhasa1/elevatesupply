@@ -111,51 +111,33 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-white pt-20 pb-16 sm:pt-24">
-      <div className="container mx-auto max-w-7xl px-4">
-        <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm font-medium text-stone-500">
+    <div className="min-h-screen bg-white pt-14 pb-8 sm:pt-16 sm:pb-12">
+      <div className="container mx-auto max-w-7xl px-3 sm:px-4">
+        <nav className="mb-3 flex flex-wrap items-center gap-1.5 text-xs sm:text-sm font-medium text-stone-500">
           <Link to="/catalog" className="flex items-center gap-1 hover:text-rose-700">
-            <ArrowLeft className="h-4 w-4" /> Catalog
+            <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Catalog
           </Link>
           <span className="text-stone-300">/</span>
-          <Link to={`/catalog?tracker=${product.trackerId}`} className="hover:text-rose-700">
+          <Link to={`/catalog?tracker=${product.trackerId}`} className="hover:text-rose-700 truncate max-w-[100px] sm:max-w-none">
             {product.trackerName}
           </Link>
-          <span className="text-stone-300">/</span>
-          <span className="max-w-[260px] truncate text-stone-900 sm:max-w-[320px]">{product.title}</span>
+          <span className="text-stone-300 hidden sm:inline">/</span>
+          <span className="hidden sm:inline max-w-[260px] truncate text-stone-900 sm:max-w-[320px]">{product.title}</span>
         </nav>
 
-        <div className="mb-16 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16 items-start">
-          <div className="flex flex-col gap-4 sm:gap-0 lg:sticky lg:top-24">
-            {/* Mobile horizontal thumbnails */}
-            {activeGallery.length > 0 && (
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide sm:hidden w-full">
-                {activeGallery.map((image) => (
-                  <button
-                    key={image}
-                    type="button"
-                    onClick={() => setActiveImage(image)}
-                    className={`shrink-0 w-16 h-16 overflow-hidden rounded-xl border-2 transition-all ${
-                      activeImage === image ? "border-rose-400 shadow-sm" : "border-transparent hover:border-stone-200"
-                    }`}
-                  >
-                    <img src={image} alt="" className="h-full w-full object-contain" referrerPolicy="no-referrer" />
-                  </button>
-                ))}
-              </div>
-            )}
-            
-
+        <div className="mb-6 sm:mb-8 flex flex-col lg:grid lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+          <div className="flex flex-col gap-3">
+            {/* Main Image with Desktop Sidebar */}
             <div className="relative flex w-full">
-              {/* Desktop vertical thumbnails */}
+              {/* Desktop vertical thumbnails - left side */}
               {activeGallery.length > 0 && (
-                <div className="hidden sm:flex absolute left-0 top-0 bottom-0 w-20 flex-col gap-3 overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-stone-200 hover:[&::-webkit-scrollbar-thumb]:bg-stone-300 [&::-webkit-scrollbar-track]:bg-transparent">
+                <div className="hidden sm:flex absolute left-0 top-0 bottom-0 w-16 lg:w-20 flex-col gap-2 overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-stone-200 hover:[&::-webkit-scrollbar-thumb]:bg-stone-300 [&::-webkit-scrollbar-track]:bg-transparent">
                   {activeGallery.map((image) => (
                     <button
                       key={image}
                       type="button"
                       onClick={() => setActiveImage(image)}
-                      className={`shrink-0 w-full aspect-square overflow-hidden rounded-xl border-2 transition-all ${
+                      className={`shrink-0 w-full aspect-square overflow-hidden rounded-lg border-2 transition-all ${
                         activeImage === image ? "border-rose-400 shadow-sm" : "border-transparent hover:border-stone-200"
                       }`}
                     >
@@ -165,43 +147,61 @@ export default function ProductDetail() {
                 </div>
               )}
               
-              <div className={`relative flex-1 aspect-square w-full overflow-hidden rounded-2xl border border-stone-200 bg-white p-4 sm:p-8 ${activeGallery.length > 0 ? "sm:ml-[104px]" : ""}`}>
+              <div className={`relative w-full overflow-hidden rounded-xl sm:rounded-2xl border border-stone-200 bg-white ${activeGallery.length > 0 ? "sm:ml-[76px] lg:ml-[92px]" : ""}`}>
                 {activeImage ? (
                   <img
                     src={activeImage}
                     alt={product.title}
-                    className="h-full w-full object-contain"
+                    className="w-full h-auto sm:h-full sm:object-contain object-contain"
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div className="h-full w-full rounded-xl bg-gradient-to-br from-stone-200 via-stone-100 to-white" />
+                  <div className="aspect-square sm:aspect-auto w-full bg-gradient-to-br from-stone-200 via-stone-100 to-white" />
                 )}
               </div>
             </div>
+            
+            {/* Mobile thumbnails - below image */}
+            {activeGallery.length > 0 && (
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide sm:hidden">
+                {activeGallery.map((image) => (
+                  <button
+                    key={image}
+                    type="button"
+                    onClick={() => setActiveImage(image)}
+                    className={`shrink-0 w-16 h-16 rounded-lg border-2 transition-all overflow-hidden ${
+                      activeImage === image ? "border-rose-400 shadow-sm" : "border-transparent hover:border-stone-200"
+                    }`}
+                  >
+                    <img src={image} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col">
-            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-wrap items-center gap-3">
-                <Badge variant="outline" className="text-[10px] uppercase tracking-[0.2em]">
+            <div className="mb-2 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline" className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em]">
                   {product.trackerName}
                 </Badge>
-                <Badge variant="secondary">{getAvailabilityLabel(activeAvailability)}</Badge>
+                <Badge variant="secondary" className="text-[9px] sm:text-xs">{getAvailabilityLabel(activeAvailability)}</Badge>
               </div>
-              <div className="text-sm text-stone-500">Listing ID: {product.listingId}</div>
+              <div className="text-xs sm:text-sm text-stone-500">ID: {product.listingId}</div>
             </div>
 
-            <h1 className="mb-4 text-3xl font-bold leading-tight text-stone-900 sm:text-4xl">{product.title}</h1>
+            <h1 className="mb-3 sm:mb-4 text-xl sm:text-2xl lg:text-3xl font-bold leading-tight text-stone-900">{product.title}</h1>
 
-            <div className="mb-8 rounded-2xl border border-stone-100 bg-[#faf9f8] p-5 sm:p-6">
-              <div className="mb-2 flex flex-wrap items-baseline gap-2">
-                <span className="text-3xl font-bold text-stone-900 sm:text-4xl">
+            <div className="mb-4 sm:mb-5 rounded-lg sm:rounded-xl border border-stone-100 bg-[#faf9f8] p-3 sm:p-4 lg:p-5">
+              <div className="flex flex-wrap items-baseline gap-2">
+                <span className="text-2xl sm:text-3xl font-bold text-stone-900">
                   {formatCurrency(selectedVariation.displayPrice, selectedVariation.currency)}
                 </span>
               </div>
            
               {Object.keys(activeSelectedOptions).length > 0 && (
-                <div className="mt-3 text-sm text-stone-600">
+                <div className="mt-2 sm:mt-3 text-xs sm:text-sm text-stone-600">
                   Selected:{" "}
                   {Object.entries(activeSelectedOptions)
                     .map(([key, value]) => `${key}: ${value}`)
@@ -211,11 +211,11 @@ export default function ProductDetail() {
             </div>
 
             {variationOptionGroups.length > 0 && (
-              <div className="mb-8 space-y-5">
-                <h3 className="text-sm font-semibold text-stone-900">Choose options</h3>
+              <div className="mb-4 sm:mb-5 space-y-3 sm:space-y-4">
+                <h3 className="text-xs sm:text-sm font-semibold text-stone-900">Choose options</h3>
                 {variationOptionGroups.map((group) => (
-                  <div key={group.key} className="space-y-2">
-                    <label htmlFor={`select-${group.key}`} className="text-sm font-medium text-stone-700">
+                  <div key={group.key} className="space-y-1.5 sm:space-y-2">
+                    <label htmlFor={`select-${group.key}`} className="text-xs sm:text-sm font-medium text-stone-700">
                       {group.key}
                     </label>
                     <div className="relative">
@@ -235,7 +235,7 @@ export default function ProductDetail() {
                           setSelectedOptions(nextSelection.selectedOptions);
                           setSelectedVariationId(nextSelection.variation.id);
                         }}
-                        className="w-full appearance-none rounded-xl border border-stone-200 bg-white px-4 py-3 pr-10 text-sm font-medium text-stone-700 focus:border-rose-400 focus:outline-none focus:ring-1 focus:ring-rose-400"
+                        className="w-full appearance-none rounded-lg sm:rounded-xl border border-stone-200 bg-white px-3 sm:px-4 py-2 sm:py-3 pr-8 sm:pr-10 text-xs sm:text-sm font-medium text-stone-700 focus:border-rose-400 focus:outline-none focus:ring-1 focus:ring-rose-400"
                       >
                         {group.values.map((value) => (
                           <option key={value} value={value}>
@@ -243,29 +243,29 @@ export default function ProductDetail() {
                           </option>
                         ))}
                       </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-stone-500">
-                        <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 sm:px-4 text-stone-500">
+                        <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-current" viewBox="0 0 20 20">
                           <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
                         </svg>
                       </div>
                     </div>
                   </div>
                 ))}
-                <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-600">
+                <div className="rounded-md sm:rounded-lg border border-stone-200 bg-stone-50 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-stone-600">
                   {selectedVariation.name} | {getAvailabilityLabel(activeAvailability)}
                 </div>
               </div>
             )}
 
             {variationOptionGroups.length === 0 && product.variations.length > 1 && (
-              <div className="mb-8">
-                <h3 className="mb-3 text-sm font-semibold text-stone-900">Variations</h3>
-                <div className="space-y-3">
+              <div className="mb-4 sm:mb-5">
+                <h3 className="mb-2 text-xs sm:text-sm font-semibold text-stone-900">Variations</h3>
+                <div className="space-y-1.5 sm:space-y-2">
                   {product.variations.map((variation) => (
                     <button
                       key={variation.id}
                       type="button"
-                      className={`flex w-full flex-col gap-3 rounded-xl border px-4 py-4 text-left transition-colors sm:flex-row sm:items-center sm:justify-between ${
+                      className={`flex w-full flex-col gap-1.5 rounded-md sm:rounded-lg border px-2.5 sm:px-3 py-2 sm:py-2.5 text-left transition-colors sm:flex-row sm:items-center sm:justify-between ${
                         selectedVariation.id === variation.id
                           ? "border-rose-300 bg-rose-50"
                           : "border-stone-200 bg-stone-50"
@@ -276,18 +276,18 @@ export default function ProductDetail() {
                       }}
                     >
                       <div>
-                        <div className="font-medium text-stone-900">{variation.name}</div>
-                        <div className="text-xs text-stone-500">
+                        <div className="text-sm font-medium text-stone-900">{variation.name}</div>
+                        <div className="text-[10px] sm:text-xs text-stone-500">
                           {Object.entries(extractSelectedOptions(variation.selects))
                             .map(([key, value]) => `${key}: ${value}`)
                             .join(" | ")}
                         </div>
                       </div>
                       <div className="text-left sm:text-right">
-                        <div className="font-semibold text-stone-900">
+                        <div className="text-sm font-semibold text-stone-900">
                           {formatCurrency(variation.displayPrice, variation.currency)}
                         </div>
-                        <div className="text-xs text-stone-500">{getAvailabilityLabel(variation.availability)}</div>
+                        <div className="text-[10px] sm:text-xs text-stone-500">{getAvailabilityLabel(variation.availability)}</div>
                       </div>
                     </button>
                   ))}
@@ -295,11 +295,11 @@ export default function ProductDetail() {
               </div>
             )}
 
-            <div className="mb-8 flex flex-col gap-3">
+            <div className="mb-4 sm:mb-5 flex flex-col gap-2">
               {session ? (
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-full bg-rose-600 text-base font-bold text-white hover:bg-rose-700"
+                  className="h-11 sm:h-12 w-full rounded-full bg-rose-600 text-sm sm:text-base font-bold text-white hover:bg-rose-700"
                   onClick={() => setCheckoutOpen(true)}
                   disabled={activeAvailability !== "in_stock" || product.availability === "ended"}
                 >
@@ -307,7 +307,7 @@ export default function ProductDetail() {
                 </Button>
               ) : (
                 <Link to="/auth/sign-in">
-                  <Button size="lg" className="h-12 w-full rounded-full bg-rose-600 text-base font-bold text-white hover:bg-rose-700">
+                  <Button size="lg" className="h-11 sm:h-12 w-full rounded-full bg-rose-600 text-sm sm:text-base font-bold text-white hover:bg-rose-700">
                     Sign In To Checkout
                   </Button>
                 </Link>
@@ -315,33 +315,33 @@ export default function ProductDetail() {
 
               {canViewSourceListing ? (
                 <a href={product.url || "#"} target="_blank" rel="noreferrer">
-                  <Button size="lg" variant="outline" className="h-12 w-full rounded-full text-base font-bold">
-                    View Source Listing <ExternalLink className="ml-2 h-4 w-4" />
+                  <Button size="lg" variant="outline" className="h-11 sm:h-12 w-full rounded-full text-sm sm:text-base font-bold">
+                    View Source Listing <ExternalLink className="ml-1.5 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
                 </a>
               ) : null}
             </div>
 
-            <div className="space-y-3 rounded-xl border border-stone-200 bg-stone-50 p-4">
-              <div className="flex items-center gap-3 text-sm text-stone-700">
-                <Truck className="h-5 w-5 text-stone-900" />
+            <div className="space-y-1.5 sm:space-y-2 rounded-md sm:rounded-lg border border-stone-200 bg-stone-50 p-2.5 sm:p-3">
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-stone-700">
+                <Truck className="h-4 w-4 sm:h-5 sm:w-5 text-stone-900" />
                 <span className="font-medium">Handling:</span> {product.handlingNote || "Standard handling applies"}
               </div>
-              <div className="flex items-center gap-3 text-sm text-stone-700">
-                <ShieldCheck className="h-5 w-5 text-stone-900" />
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-stone-700">
+                <ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 text-stone-900" />
                 <span className="font-medium">Tracker:</span> {product.trackerName}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-stone-200 pt-12">
-          <h2 className="mb-6 text-2xl font-bold text-stone-900">Product Notes</h2>
-          <div className="space-y-4 rounded-xl border border-stone-200 bg-[#faf9f8] p-6">
-            <div className="leading-relaxed text-stone-700 whitespace-pre-wrap">
+        <div className="mt-6 sm:mt-8 border-t border-stone-200 pt-6 sm:pt-8">
+          <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-stone-900">Product Notes</h2>
+          <div className="space-y-2 sm:space-y-3 rounded-lg sm:rounded-xl border border-stone-200 bg-[#faf9f8] p-3 sm:p-4">
+            <div className="leading-relaxed text-stone-700 whitespace-pre-wrap text-xs sm:text-sm">
               {product.description || "No extra product description has been added for this tracker item yet."}
             </div>
-            <div className="text-sm text-stone-500">
+            <div className="text-xs sm:text-sm text-stone-500">
               Updated: {product.updatedAt ? new Date(product.updatedAt).toLocaleString() : "No timestamp available"}
             </div>
           </div>

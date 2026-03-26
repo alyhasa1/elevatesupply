@@ -73,14 +73,11 @@ export default function Catalog() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f8] pt-20 pb-16 sm:pt-24">
-      <div className="container mx-auto space-y-8 px-4">
+    <div className="min-h-screen bg-[#faf9f8] pt-5 pb-8 sm:pt-8">
+      <div className="container mx-auto space-y-2 px-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl">
-            <h1 className="mb-3 text-3xl font-semibold text-stone-900 sm:text-4xl">Catalog</h1>
-            <p className="text-base text-stone-600 sm:text-lg">
-              Browse the five tracker families with page-by-page loading, availability filtering, and live worker-backed data.
-            </p>
+          <div className="max-w-2xl">
+            <h1 className="mb-3 text-3xl font-semibold text-stone-900 sm:text-4xl">Our Stock</h1>
           </div>
           <div className="w-full max-w-xl">
             <Input

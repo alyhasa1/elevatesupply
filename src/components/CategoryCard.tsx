@@ -18,7 +18,7 @@ export function CategoryCard({ category, isLarge = false }: CategoryCardProps) {
       <div className="absolute inset-0 bg-gradient-to-br from-stone-900 via-stone-800 to-stone-950 transition-transform duration-1000 group-hover:scale-105"></div>
       <div className="absolute inset-0 bg-rose-900/10 mix-blend-overlay"></div>
 
-      <div className="absolute inset-0 p-8 flex flex-col justify-between">
+      <div className="absolute inset-0 p-6 flex flex-col justify-between">
         <div className="flex justify-between items-start">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white uppercase tracking-wider">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
