@@ -11,8 +11,8 @@ export function CategoryCard({ category, isLarge = false }: CategoryCardProps) {
   return (
     <Link
       to={`/catalog?tracker=${category.id}`}
-      className={`group block relative overflow-hidden rounded-2xl ${
-        isLarge ? "md:col-span-2 md:row-span-2" : "col-span-1 row-span-1"
+      className={`group flex h-full min-h-[280px] relative overflow-hidden rounded-2xl ${
+        isLarge ? "md:col-span-2 md:row-span-2 md:min-h-[576px]" : "col-span-1 row-span-1"
       } shadow-sm hover:shadow-2xl hover:shadow-rose-900/20 transition-all duration-500 bg-stone-100 border border-stone-200`}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-stone-900 via-stone-800 to-stone-950 transition-transform duration-1000 group-hover:scale-105"></div>
