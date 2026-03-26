@@ -117,12 +117,7 @@ export default function StorefrontLayout() {
               </Link>
             ))}
             <div className="flex-1"></div>
-            <Link
-              to="/admin/products"
-              className="text-sm font-semibold text-rose-800 hover:text-rose-900 whitespace-nowrap transition-colors"
-            >
-              Manage Pricing
-            </Link>
+           
           </nav>
         </div>
       </header>

@@ -147,7 +147,7 @@ export default function ProductDetail() {
                 </div>
               )}
               
-              <div className={`relative aspect-square w-full overflow-hidden rounded-xl sm:rounded-2xl border border-stone-200 bg-white ${activeGallery.length > 0 ? "sm:ml-[76px] lg:ml-[92px]" : ""}`}>
+              <div className={`relative w-full overflow-hidden rounded-xl sm:rounded-2xl border border-stone-200 bg-white min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] ${activeGallery.length > 0 ? "sm:ml-[76px] lg:ml-[92px]" : ""}`}>
                 {activeImage ? (
                   <img
                     src={activeImage}
