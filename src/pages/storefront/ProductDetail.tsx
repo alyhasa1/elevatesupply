@@ -147,16 +147,16 @@ export default function ProductDetail() {
                 </div>
               )}
               
-              <div className={`relative w-full overflow-hidden rounded-xl sm:rounded-2xl border border-stone-200 bg-white ${activeGallery.length > 0 ? "sm:ml-[76px] lg:ml-[92px]" : ""}`}>
+              <div className={`relative aspect-square w-full overflow-hidden rounded-xl sm:rounded-2xl border border-stone-200 bg-white ${activeGallery.length > 0 ? "sm:ml-[76px] lg:ml-[92px]" : ""}`}>
                 {activeImage ? (
                   <img
                     src={activeImage}
                     alt={product.title}
-                    className="w-full h-auto sm:h-full sm:object-contain object-contain"
+                    className="h-full w-full object-contain"
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div className="aspect-square sm:aspect-auto w-full bg-gradient-to-br from-stone-200 via-stone-100 to-white" />
+                  <div className="h-full w-full bg-gradient-to-br from-stone-200 via-stone-100 to-white" />
                 )}
               </div>
             </div>
@@ -173,7 +173,7 @@ export default function ProductDetail() {
                       activeImage === image ? "border-rose-400 shadow-sm" : "border-transparent hover:border-stone-200"
                     }`}
                   >
-                    <img src={image} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+                    <img src={image} alt="" className="h-full w-full object-contain" referrerPolicy="no-referrer" />
                   </button>
                 ))}
               </div>

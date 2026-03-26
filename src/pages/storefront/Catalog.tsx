@@ -73,7 +73,7 @@ export default function Catalog() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f8] pt-5 pb-8 sm:pt-8">
+    <div className="min-h-screen bg-[#faf9f8] pt-12 pb-8 sm:pt-16">
       <div className="container mx-auto space-y-2 px-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
