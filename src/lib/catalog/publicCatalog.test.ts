@@ -27,7 +27,7 @@ function makeProduct(
   return {
     id: `tims_textile:${listingId}`,
     trackerId: "tims_textile",
-    trackerName: "Tims Textile Stock",
+    trackerName: "Textile stock",
     listingId,
     title: `Product ${listingId}`,
     description: "",
@@ -97,8 +97,8 @@ test("buildPublicCatalogPage clamps page bounds and keeps ended as a distinct fi
 test("buildHomeCatalogPayload returns a curated storefront slice and live count", () => {
   const payload = buildHomeCatalogPayload(snapshot);
 
-  assert.equal(payload.featuredProducts.length, 4);
-  assert.equal(payload.recentProducts.length, 4);
+  assert.equal(payload.featuredProducts.length, 6);
+  assert.equal(payload.recentProducts.length, 6);
   assert.equal(payload.liveCount, 2);
   assert.equal(payload.updatedAt, snapshot.updatedAt);
 });

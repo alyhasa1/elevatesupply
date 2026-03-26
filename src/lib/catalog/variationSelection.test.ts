@@ -24,7 +24,7 @@ function makeVariation(id: string, selects: Record<string, string>, overrides: P
 const product: CatalogProduct = {
   id: "tims_textile:LIST-1",
   trackerId: "tims_textile",
-  trackerName: "Tims Textile Stock",
+  trackerName: "Textile stock",
   listingId: "LIST-1",
   title: "Variation Demo",
   description: "",

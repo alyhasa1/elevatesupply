@@ -13,7 +13,7 @@ export default function Home() {
   const trackers = data.trackers.length > 0 ? data.trackers : TRACKERS;
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#faf9f8]">
+    <div className="flex min-h-screen flex-col bg-[#faf9f8] overflow-x-hidden">
       <section className="relative flex min-h-[78vh] items-center overflow-hidden bg-stone-950 text-white">
         <div className="absolute inset-0 bg-gradient-to-br from-rose-950 via-stone-900 to-stone-950 opacity-90" />
         <div className="absolute inset-0 bg-[url('https://assets.architecturaldigest.in/photos/62026064b5d9eefa7e4e2ddf/master/pass/How%20to%20furnish%20your%20home%20on%20a%20budget.jpg')] bg-cover bg-center opacity-10 mix-blend-overlay" />
@@ -106,32 +106,24 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative bg-white py-20 sm:py-24 lg:py-32">
+      <section className="bg-white py-20 sm:py-24 lg:py-32">
         <div className="container mx-auto px-4">
           <div className="mb-12 flex flex-col gap-6 md:mb-16 md:flex-row md:items-end md:justify-between">
             <div className="max-w-3xl">
               <div className="mb-5 flex items-center gap-3">
                 <div className="h-px w-12 bg-rose-700" />
-                <span className="text-xs font-semibold uppercase tracking-widest text-rose-700">Tracker Categories</span>
+                <span className="text-xs font-semibold uppercase tracking-widest text-rose-700">Stock Categories</span>
               </div>
               <h2 className="mb-4 text-3xl font-light tracking-tight text-stone-900 sm:text-4xl md:text-5xl">
-                Shop by{" "}
+                <span>Shop by </span>
                 <span className="bg-gradient-to-r from-rose-700 to-rose-500 bg-clip-text font-semibold text-transparent">
-                  Tracker
+                  Category
                 </span>
               </h2>
             </div>
-            <Link to="/catalog" className="w-full sm:w-auto">
-              <Button
-                variant="outline"
-                className="w-full rounded-full border-stone-300 px-6 text-stone-900 hover:bg-stone-100 sm:w-auto"
-              >
-                Browse Full Catalog
-              </Button>
-            </Link>
           </div>
 
-          <div className="grid auto-rows-[220px] grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-2">
+          <div className="grid auto-rows-[280px] grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-2">
             {trackers.map((tracker, index) => (
               <CategoryCard key={tracker.id} category={tracker} isLarge={index === 0} />
             ))}
@@ -148,9 +140,7 @@ export default function Home() {
                 <span className="text-xs font-bold uppercase tracking-wider text-rose-700">Live Catalog</span>
               </div>
               <h2 className="mb-4 text-3xl font-bold tracking-tight text-stone-900">Featured Products</h2>
-              <p className="max-w-2xl text-base text-stone-600 sm:text-lg">
-                Current live listings pulled into the catalog so you can browse the real products instead of mock data.
-              </p>
+             
             </div>
             <Link to="/catalog" className="w-full sm:w-auto">
               <Button variant="outline" className="w-full rounded-full border-stone-300 px-6 text-stone-700 hover:bg-stone-50 sm:w-auto">
@@ -162,7 +152,7 @@ export default function Home() {
           {status === "loading" && <div className="text-stone-500">Loading products...</div>}
           {status === "error" && <div className="text-rose-700">{error || "Catalog could not be loaded."}</div>}
           {status === "ready" && (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 xl:grid-cols-6">
               {data.featuredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -194,7 +184,7 @@ export default function Home() {
           {status === "loading" && <div className="text-stone-500">Loading updates...</div>}
           {status === "error" && <div className="text-rose-700">{error || "Catalog could not be loaded."}</div>}
           {status === "ready" && data.recentProducts.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 xl:grid-cols-6">
               {data.recentProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

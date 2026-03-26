@@ -125,30 +125,18 @@ export default function ProductDetail() {
           <span className="max-w-[260px] truncate text-stone-900 sm:max-w-[320px]">{product.title}</span>
         </nav>
 
-        <div className="mb-16 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
-          <div className="space-y-4">
-            <div className="relative aspect-square overflow-hidden rounded-2xl border border-stone-200 bg-white p-4 sm:p-8">
-              {activeImage ? (
-                <img
-                  src={activeImage}
-                  alt={product.title}
-                  className="h-full w-full object-contain"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <div className="h-full w-full rounded-xl bg-gradient-to-br from-stone-200 via-stone-100 to-white" />
-              )}
-            </div>
-
+        <div className="mb-16 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16 items-start">
+          <div className="flex flex-col gap-4 sm:gap-0 lg:sticky lg:top-24">
+            {/* Mobile horizontal thumbnails */}
             {activeGallery.length > 0 && (
-              <div className="grid grid-cols-4 gap-3 sm:grid-cols-5">
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide sm:hidden w-full">
                 {activeGallery.map((image) => (
                   <button
                     key={image}
                     type="button"
                     onClick={() => setActiveImage(image)}
-                    className={`aspect-square overflow-hidden rounded-xl border p-2 transition-colors ${
-                      activeImage === image ? "border-rose-400 bg-rose-50" : "border-stone-200 bg-white"
+                    className={`shrink-0 w-16 h-16 overflow-hidden rounded-xl border-2 transition-all ${
+                      activeImage === image ? "border-rose-400 shadow-sm" : "border-transparent hover:border-stone-200"
                     }`}
                   >
                     <img src={image} alt="" className="h-full w-full object-contain" referrerPolicy="no-referrer" />
@@ -156,6 +144,40 @@ export default function ProductDetail() {
                 ))}
               </div>
             )}
+            
+
+            <div className="relative flex w-full">
+              {/* Desktop vertical thumbnails */}
+              {activeGallery.length > 0 && (
+                <div className="hidden sm:flex absolute left-0 top-0 bottom-0 w-20 flex-col gap-3 overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-stone-200 hover:[&::-webkit-scrollbar-thumb]:bg-stone-300 [&::-webkit-scrollbar-track]:bg-transparent">
+                  {activeGallery.map((image) => (
+                    <button
+                      key={image}
+                      type="button"
+                      onClick={() => setActiveImage(image)}
+                      className={`shrink-0 w-full aspect-square overflow-hidden rounded-xl border-2 transition-all ${
+                        activeImage === image ? "border-rose-400 shadow-sm" : "border-transparent hover:border-stone-200"
+                      }`}
+                    >
+                      <img src={image} alt="" className="h-full w-full object-contain" referrerPolicy="no-referrer" />
+                    </button>
+                  ))}
+                </div>
+              )}
+              
+              <div className={`relative flex-1 aspect-square w-full overflow-hidden rounded-2xl border border-stone-200 bg-white p-4 sm:p-8 ${activeGallery.length > 0 ? "sm:ml-[104px]" : ""}`}>
+                {activeImage ? (
+                  <img
+                    src={activeImage}
+                    alt={product.title}
+                    className="h-full w-full object-contain"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="h-full w-full rounded-xl bg-gradient-to-br from-stone-200 via-stone-100 to-white" />
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col">
@@ -177,12 +199,7 @@ export default function ProductDetail() {
                   {formatCurrency(selectedVariation.displayPrice, selectedVariation.currency)}
                 </span>
               </div>
-              <div className="text-sm text-stone-500">
-                Base price: {formatCurrency(selectedVariation.basePrice, selectedVariation.currency)}
-                {product.shippingPrice
-                  ? ` | Shipping component: ${formatCurrency(product.shippingPrice, product.currency)}`
-                  : ""}
-              </div>
+           
               {Object.keys(activeSelectedOptions).length > 0 && (
                 <div className="mt-3 text-sm text-stone-600">
                   Selected:{" "}
@@ -198,36 +215,39 @@ export default function ProductDetail() {
                 <h3 className="text-sm font-semibold text-stone-900">Choose options</h3>
                 {variationOptionGroups.map((group) => (
                   <div key={group.key} className="space-y-2">
-                    <div className="text-sm font-medium text-stone-700">{group.key}</div>
-                    <div className="flex flex-wrap gap-2">
-                      {group.values.map((value) => {
-                        const isActive = activeSelectedOptions[group.key] === value;
-                        return (
-                          <button
-                            key={value}
-                            type="button"
-                            onClick={() => {
-                              const nextSelection = resolveVariationSelection(
-                                product,
-                                {
-                                  ...activeSelectedOptions,
-                                  [group.key]: value,
-                                },
-                                group.key,
-                              );
-                              setSelectedOptions(nextSelection.selectedOptions);
-                              setSelectedVariationId(nextSelection.variation.id);
-                            }}
-                            className={`rounded-xl border px-4 py-3 text-sm font-medium transition-colors ${
-                              isActive
-                                ? "border-rose-400 bg-rose-50 text-rose-800"
-                                : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
-                            }`}
-                          >
+                    <label htmlFor={`select-${group.key}`} className="text-sm font-medium text-stone-700">
+                      {group.key}
+                    </label>
+                    <div className="relative">
+                      <select
+                        id={`select-${group.key}`}
+                        value={activeSelectedOptions[group.key] || group.values[0] || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          const nextSelection = resolveVariationSelection(
+                            product,
+                            {
+                              ...activeSelectedOptions,
+                              [group.key]: value,
+                            },
+                            group.key,
+                          );
+                          setSelectedOptions(nextSelection.selectedOptions);
+                          setSelectedVariationId(nextSelection.variation.id);
+                        }}
+                        className="w-full appearance-none rounded-xl border border-stone-200 bg-white px-4 py-3 pr-10 text-sm font-medium text-stone-700 focus:border-rose-400 focus:outline-none focus:ring-1 focus:ring-rose-400"
+                      >
+                        {group.values.map((value) => (
+                          <option key={value} value={value}>
                             {value}
-                          </button>
-                        );
-                      })}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-stone-500">
+                        <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                        </svg>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -318,9 +338,9 @@ export default function ProductDetail() {
         <div className="mt-12 border-t border-stone-200 pt-12">
           <h2 className="mb-6 text-2xl font-bold text-stone-900">Product Notes</h2>
           <div className="space-y-4 rounded-xl border border-stone-200 bg-[#faf9f8] p-6">
-            <p className="leading-relaxed text-stone-700">
+            <div className="leading-relaxed text-stone-700 whitespace-pre-wrap">
               {product.description || "No extra product description has been added for this tracker item yet."}
-            </p>
+            </div>
             <div className="text-sm text-stone-500">
               Updated: {product.updatedAt ? new Date(product.updatedAt).toLocaleString() : "No timestamp available"}
             </div>

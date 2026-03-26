@@ -118,7 +118,7 @@ export function buildPublicCatalogPage(
 }
 
 export function buildHomeCatalogPayload(snapshot: CatalogSnapshot): HomeCatalogPayload {
-  const featuredProducts = snapshot.products.slice(0, 4);
+  const featuredProducts = snapshot.products.slice(0, 6);
   const recentProducts = snapshot.products.filter((product) => isUpdatedWithinHours(product, 24));
   const fallbackPool = snapshot.products.filter((product) => !featuredProducts.some((entry) => entry.id === product.id));
   const secondaryProducts = [...recentProducts, ...fallbackPool].filter(
@@ -128,7 +128,7 @@ export function buildHomeCatalogPayload(snapshot: CatalogSnapshot): HomeCatalogP
   return {
     trackers: snapshot.trackers,
     featuredProducts: featuredProducts.map((product) => toPublicCatalogProduct(product)),
-    recentProducts: secondaryProducts.slice(0, 4).map((product) => toPublicCatalogProduct(product)),
+    recentProducts: secondaryProducts.slice(0, 6).map((product) => toPublicCatalogProduct(product)),
     liveCount: snapshot.products.filter((product) => product.availability === "in_stock").length,
     updatedAt: snapshot.updatedAt,
   };

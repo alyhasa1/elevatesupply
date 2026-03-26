@@ -8,7 +8,7 @@ function makeProduct(overrides: Partial<CatalogProduct>): CatalogProduct {
   return {
     id: `${overrides.trackerId || "tims_textile"}:${overrides.listingId || "demo"}`,
     trackerId: "tims_textile",
-    trackerName: "Tims Textile Stock",
+    trackerName: "Textile stock",
     listingId: "demo",
     title: "Demo Product",
     description: "",
@@ -35,8 +35,8 @@ const snapshot: CatalogSnapshot = {
   trackers: [],
   updatedAt: "2026-03-23T00:00:00.000Z",
   products: [
-    makeProduct({ listingId: "TT-1", title: "Blue Duvet", trackerId: "tims_textile", trackerName: "Tims Textile Stock" }),
-    makeProduct({ listingId: "TT-2", title: "Grey Duvet", trackerId: "tims_textile", trackerName: "Tims Textile Stock" }),
+    makeProduct({ listingId: "TT-1", title: "Blue Duvet", trackerId: "tims_textile", trackerName: "Textile stock" }),
+    makeProduct({ listingId: "TT-2", title: "Grey Duvet", trackerId: "tims_textile", trackerName: "Textile stock" }),
     makeProduct({ listingId: "TK-1", title: "TikTok Lamp", trackerId: "tiktok_ds", trackerName: "TikTok DS Stock" }),
     makeProduct({ listingId: "WH-1", title: "Wholesale Mug", trackerId: "wholesale_items", trackerName: "Wholesale Items Stock" }),
     makeProduct({ listingId: "PJ-1", title: "Pakistani Jacket Navy", trackerId: "pakistani_jackets", trackerName: "Pakistani Jackets Stock" }),

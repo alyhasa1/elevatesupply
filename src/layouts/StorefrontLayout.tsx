@@ -13,9 +13,9 @@ export default function StorefrontLayout() {
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex space-x-6">
             <span className="hidden sm:inline">
-              Elevate Supply: tracker-first inventory for the five Ecom With Yasir tools
+              Elevate Supply
             </span>
-            <span className="font-semibold text-rose-300">Project-local pricing preserved</span>
+            <span className="font-semibold text-rose-300"> Dropshipping is easier than you think</span>
           </div>
           <div className="flex space-x-5">
             <Link to="/catalog" className="hover:text-white transition-colors">
@@ -132,7 +132,7 @@ export default function StorefrontLayout() {
       </main>
 
       <footer className="bg-stone-950 text-stone-400 py-20 mt-20 border-t border-stone-900">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center space-x-3 mb-6 group">
               <div className="w-9 h-9 bg-rose-900 rounded-lg flex items-center justify-center shadow-lg shadow-rose-900/20 group-hover:bg-rose-800 transition-colors">
@@ -143,77 +143,50 @@ export default function StorefrontLayout() {
               </span>
             </Link>
             <p className="text-sm mb-8 max-w-sm leading-relaxed text-stone-400">
-              Tracker-first inventory for the separated Elevate Supply site, with project-local pricing layered over the
-              original Ecom With Yasir tools.
+              Your premium dropshipping and fulfilment network. Start selling and let us handle the logistics.
             </p>
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-6 tracking-wide uppercase text-xs">Platform</h4>
+            <h4 className="text-white font-semibold mb-6 tracking-wide uppercase text-xs">Categories</h4>
+            <ul className="space-y-4 text-sm">
+              {TRACKERS.slice(0, 5).map(tracker => (
+                <li key={tracker.id}>
+                  <Link to={`/catalog?tracker=${tracker.id}`} className="hover:text-rose-400 transition-colors">
+                    {tracker.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-white font-semibold mb-6 tracking-wide uppercase text-xs">Company</h4>
             <ul className="space-y-4 text-sm">
               <li>
                 <Link to="/catalog" className="hover:text-rose-400 transition-colors">
-                  Catalog
+                  All Products
                 </Link>
               </li>
               <li>
-                <Link to="/catalog?tracker=tims_textile" className="hover:text-rose-400 transition-colors">
-                  Tims Textile Stock
-                </Link>
+                <a href="#" className="hover:text-rose-400 transition-colors">
+                  Terms & Conditions
+                </a>
               </li>
               <li>
-                <Link to="/catalog?tracker=pakistani_jackets" className="hover:text-rose-400 transition-colors">
-                  Pakistani Jackets
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-white font-semibold mb-6 tracking-wide uppercase text-xs">Resources</h4>
-            <ul className="space-y-4 text-sm">
-              <li>
-                <Link to="/admin/products" className="hover:text-rose-400 transition-colors">
-                  Admin pricing
-                </Link>
-              </li>
-              <li>
-                <Link to="/admin" className="hover:text-rose-400 transition-colors">
-                  Inventory dashboard
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-white font-semibold mb-6 tracking-wide uppercase text-xs">Trackers</h4>
-            <ul className="space-y-4 text-sm">
-              <li>
-                <Link to="/catalog?tracker=account_building" className="hover:text-rose-400 transition-colors">
-                  Account Building Stock
-                </Link>
-              </li>
-              <li>
-                <Link to="/catalog?tracker=wholesale_items" className="hover:text-rose-400 transition-colors">
-                  Wholesale Items Stock
-                </Link>
-              </li>
-              <li>
-                <Link to="/catalog?tracker=tiktok_ds" className="hover:text-rose-400 transition-colors">
-                  TikTok DS Stock
-                </Link>
+                <a href="#" className="hover:text-rose-400 transition-colors">
+                  Privacy Policy
+                </a>
               </li>
             </ul>
           </div>
         </div>
         <div className="container mx-auto px-4 mt-20 pt-8 border-t border-stone-900 text-xs flex flex-col md:flex-row justify-between items-center text-stone-500">
-          <p>&copy; 2026 Elevate Supply Ltd. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Elevate Supply Ltd. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0 font-medium tracking-wide">
-            <span>5 Fixed Trackers</span>
+            <span>UK Dropshipping</span>
             <span className="text-stone-700">&bull;</span>
-            <span>Project-local pricing</span>
-            <span className="text-stone-700">&bull;</span>
-            <span>Worker + D1 backend</span>
+            <span>Fast Fulfilment</span>
           </div>
         </div>
       </footer>

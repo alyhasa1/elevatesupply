@@ -3,7 +3,7 @@ import type { TrackerDefinition } from "./types";
 export const TRACKERS: TrackerDefinition[] = [
   {
     id: "tims_textile",
-    name: "Tims Textile Stock",
+    name: "Textile stock",
     slug: "tims-textile-stock",
     description: "Live stock from the Tims Textile tracker with project-specific pricing on top.",
     statusText: "Live",
