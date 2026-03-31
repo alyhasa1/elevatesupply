@@ -15,8 +15,6 @@ export function trackerIdToOrderSource(trackerId: TrackerId): OrderSource {
       return "tiktok_stock";
     case "wholesale_items":
       return "wholesale_stock";
-    case "pakistani_jackets":
-      return "jackets_stock";
     case "account_building":
       return "account_building_stock";
   }

@@ -82,7 +82,7 @@ export function AdminProductEditor({
   saveJacketVariation,
 }: ProductEditorProps) {
   const isReadOnly = product.trackerId === "account_building";
-  const isJacket = product.trackerId === "pakistani_jackets";
+  const isJacket = false;
 
   return (
     <details className="rounded-2xl border border-slate-200 bg-white shadow-sm">

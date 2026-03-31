@@ -21,7 +21,6 @@ function toTrackerFilter(value: string | null | undefined): TrackerId | "all" {
     case "tims_textile":
     case "tiktok_ds":
     case "wholesale_items":
-    case "pakistani_jackets":
     case "account_building":
       return value;
     default:

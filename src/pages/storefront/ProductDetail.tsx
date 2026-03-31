@@ -6,9 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { OrderFormModal } from "@/components/orders/OrderFormModal";
 import { useAuth } from "@/contexts/AuthContext";
-import { formatCurrency, getAvailabilityLabel } from "@/lib/catalog/format";
+import { formatCurrency, getAvailabilityLabel, getProductDetailAvailability } from "@/lib/catalog/format";
 import { useCatalogProduct } from "@/lib/catalog/publicHooks";
-import { buildVariationOptionGroups, resolveVariationSelection } from "@/lib/catalog/variationSelection";
+import { buildVariationOptionGroups, canSelectVariationOption, resolveVariationSelection } from "@/lib/catalog/variationSelection";
 import { trackerIdToOrderSource } from "@/lib/orders/trackerOrderSource";
 
 function extractSelectedOptions(selects: Record<string, string>) {
@@ -85,7 +85,8 @@ export default function ProductDetail() {
     () => buildActiveGallery(activePrimaryImage, product?.images || []),
     [activePrimaryImage, product?.images],
   );
-  const activeAvailability = product?.availability === "ended" ? "ended" : selectedVariation.availability;
+  const detailAvailability = product ? getProductDetailAvailability(product) : "in_stock";
+  const selectedAvailability = product?.availability === "ended" ? "ended" : selectedVariation.availability;
   const canViewSourceListing = Boolean(product?.url && product.trackerId !== "wholesale_items");
 
   useEffect(() => {
@@ -93,12 +94,12 @@ export default function ProductDetail() {
   }, [activeGallery]);
 
   if (status === "loading") {
-    return <div className="min-h-screen bg-white px-4 pt-24">Loading product...</div>;
+    return <div className="bg-white px-4 py-8 sm:py-12">Loading product...</div>;
   }
 
   if (!product) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#faf9f8] px-4">
+      <div className="flex items-center justify-center bg-[#faf9f8] px-4 py-16 sm:py-24">
         <div className="text-center">
           <h2 className="mb-4 text-2xl font-bold">Product Not Found</h2>
           <p className="mb-6 text-stone-500">{error || "The requested product could not be loaded."}</p>
@@ -111,8 +112,8 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-white pt-14 pb-8 sm:pt-16 sm:pb-12">
-      <div className="container mx-auto max-w-7xl px-3 sm:px-4">
+    <div className="bg-white pt-10 pb-8 sm:pt-14 sm:pb-12">
+      <div className="container mx-auto max-w-7xl px-4">
         <nav className="mb-3 flex flex-wrap items-center gap-1.5 text-xs sm:text-sm font-medium text-stone-500">
           <Link to="/catalog" className="flex items-center gap-1 hover:text-rose-700">
             <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Catalog
@@ -186,7 +187,7 @@ export default function ProductDetail() {
                 <Badge variant="outline" className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em]">
                   {product.trackerName}
                 </Badge>
-                <Badge variant="secondary" className="text-[9px] sm:text-xs">{getAvailabilityLabel(activeAvailability)}</Badge>
+                <Badge variant="secondary" className="text-[9px] sm:text-xs">{getAvailabilityLabel(detailAvailability)}</Badge>
               </div>
               <div className="text-xs sm:text-sm text-stone-500">ID: {product.listingId}</div>
             </div>
@@ -237,11 +238,20 @@ export default function ProductDetail() {
                         }}
                         className="w-full appearance-none rounded-lg sm:rounded-xl border border-stone-200 bg-white px-3 sm:px-4 py-2 sm:py-3 pr-8 sm:pr-10 text-xs sm:text-sm font-medium text-stone-700 focus:border-rose-400 focus:outline-none focus:ring-1 focus:ring-rose-400"
                       >
-                        {group.values.map((value) => (
-                          <option key={value} value={value}>
-                            {value}
-                          </option>
-                        ))}
+                        {group.values.map((value) => {
+                          const optionIsSelectable = canSelectVariationOption(
+                            product,
+                            activeSelectedOptions,
+                            group.key,
+                            value,
+                          );
+
+                          return (
+                            <option key={value} value={value} disabled={!optionIsSelectable}>
+                              {optionIsSelectable ? value : `${value} (Out of stock)`}
+                            </option>
+                          );
+                        })}
                       </select>
                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 sm:px-4 text-stone-500">
                         <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-current" viewBox="0 0 20 20">
@@ -252,7 +262,7 @@ export default function ProductDetail() {
                   </div>
                 ))}
                 <div className="rounded-md sm:rounded-lg border border-stone-200 bg-stone-50 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-stone-600">
-                  {selectedVariation.name} | {getAvailabilityLabel(activeAvailability)}
+                  {selectedVariation.name} | {getAvailabilityLabel(selectedAvailability)}
                 </div>
               </div>
             )}
@@ -261,36 +271,42 @@ export default function ProductDetail() {
               <div className="mb-4 sm:mb-5">
                 <h3 className="mb-2 text-xs sm:text-sm font-semibold text-stone-900">Variations</h3>
                 <div className="space-y-1.5 sm:space-y-2">
-                  {product.variations.map((variation) => (
-                    <button
-                      key={variation.id}
-                      type="button"
-                      className={`flex w-full flex-col gap-1.5 rounded-md sm:rounded-lg border px-2.5 sm:px-3 py-2 sm:py-2.5 text-left transition-colors sm:flex-row sm:items-center sm:justify-between ${
-                        selectedVariation.id === variation.id
-                          ? "border-rose-300 bg-rose-50"
-                          : "border-stone-200 bg-stone-50"
-                      }`}
-                      onClick={() => {
-                        setSelectedVariationId(variation.id);
-                        setSelectedOptions(extractSelectedOptions(variation.selects));
-                      }}
-                    >
-                      <div>
-                        <div className="text-sm font-medium text-stone-900">{variation.name}</div>
-                        <div className="text-[10px] sm:text-xs text-stone-500">
-                          {Object.entries(extractSelectedOptions(variation.selects))
-                            .map(([key, value]) => `${key}: ${value}`)
-                            .join(" | ")}
+                  {product.variations.map((variation) => {
+                    const variationIsSelectable =
+                      product.availability !== "ended" && variation.availability === "in_stock";
+
+                    return (
+                      <button
+                        key={variation.id}
+                        type="button"
+                        disabled={!variationIsSelectable}
+                        className={`flex w-full flex-col gap-1.5 rounded-md sm:rounded-lg border px-2.5 sm:px-3 py-2 sm:py-2.5 text-left transition-colors sm:flex-row sm:items-center sm:justify-between ${
+                          selectedVariation.id === variation.id
+                            ? "border-rose-300 bg-rose-50"
+                            : "border-stone-200 bg-stone-50"
+                        } ${variationIsSelectable ? "" : "cursor-not-allowed opacity-60"}`}
+                        onClick={() => {
+                          setSelectedVariationId(variation.id);
+                          setSelectedOptions(extractSelectedOptions(variation.selects));
+                        }}
+                      >
+                        <div>
+                          <div className="text-sm font-medium text-stone-900">{variation.name}</div>
+                          <div className="text-[10px] sm:text-xs text-stone-500">
+                            {Object.entries(extractSelectedOptions(variation.selects))
+                              .map(([key, value]) => `${key}: ${value}`)
+                              .join(" | ")}
+                          </div>
                         </div>
-                      </div>
-                      <div className="text-left sm:text-right">
-                        <div className="text-sm font-semibold text-stone-900">
-                          {formatCurrency(variation.displayPrice, variation.currency)}
+                        <div className="text-left sm:text-right">
+                          <div className="text-sm font-semibold text-stone-900">
+                            {formatCurrency(variation.displayPrice, variation.currency)}
+                          </div>
+                          <div className="text-[10px] sm:text-xs text-stone-500">{getAvailabilityLabel(variation.availability)}</div>
                         </div>
-                        <div className="text-[10px] sm:text-xs text-stone-500">{getAvailabilityLabel(variation.availability)}</div>
-                      </div>
-                    </button>
-                  ))}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -301,7 +317,7 @@ export default function ProductDetail() {
                   size="lg"
                   className="h-11 sm:h-12 w-full rounded-full bg-rose-600 text-sm sm:text-base font-bold text-white hover:bg-rose-700"
                   onClick={() => setCheckoutOpen(true)}
-                  disabled={activeAvailability !== "in_stock" || product.availability === "ended"}
+                  disabled={selectedAvailability !== "in_stock" || product.availability === "ended"}
                 >
                   Checkout This Item
                 </Button>

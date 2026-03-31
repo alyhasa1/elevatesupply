@@ -21,7 +21,6 @@ export function calculateTrackerDisplayPrice(
     case "wholesale_items":
       return calculatePayPalInclusiveAmount(base + shipping + 0.5);
     case "tims_textile":
-    case "pakistani_jackets":
     case "account_building":
     default:
       return calculatePayPalInclusiveAmount(base);

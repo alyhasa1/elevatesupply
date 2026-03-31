@@ -14,6 +14,7 @@ export interface TrackerDefinition {
   slug: string;
   description: string;
   statusText: string;
+  bgImage?: string;
 }
 
 export interface CatalogVariation {

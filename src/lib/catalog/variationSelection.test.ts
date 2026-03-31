@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildVariationOptionGroups, resolveVariationSelection } from "./variationSelection";
+import { buildVariationOptionGroups, canSelectVariationOption, resolveVariationSelection } from "./variationSelection";
 import type { CatalogProduct, CatalogVariation } from "./types";
 
 function makeVariation(id: string, selects: Record<string, string>, overrides: Partial<CatalogVariation> = {}): CatalogVariation {
@@ -49,6 +49,17 @@ const product: CatalogProduct = {
   adminEditable: true,
 };
 
+const mixedStockProduct: CatalogProduct = {
+  ...product,
+  id: "tims_textile:LIST-2",
+  listingId: "LIST-2",
+  variations: [
+    makeVariation("mixed-red-s", { Colour: "Red", Size: "S" }, { availability: "out_of_stock" }),
+    makeVariation("mixed-red-m", { Colour: "Red", Size: "M" }),
+    makeVariation("mixed-blue-m", { Colour: "Blue", Size: "M" }, { availability: "out_of_stock" }),
+  ],
+};
+
 test("buildVariationOptionGroups groups real option keys and ignores signal metadata", () => {
   const groups = buildVariationOptionGroups(product.variations);
 
@@ -69,4 +80,29 @@ test("resolveVariationSelection keeps selection on a real variation when an inva
     Colour: "Blue",
     Size: "M",
   });
+});
+
+test("resolveVariationSelection prefers an in-stock variation when no exact preference exists", () => {
+  const result = resolveVariationSelection(mixedStockProduct, {});
+
+  assert.equal(result.variation.id, "mixed-red-m");
+  assert.deepEqual(result.selectedOptions, {
+    Colour: "Red",
+    Size: "M",
+  });
+});
+
+test("canSelectVariationOption disables values that can only resolve to out-of-stock variations", () => {
+  assert.equal(
+    canSelectVariationOption(mixedStockProduct, { Colour: "Red", Size: "M" }, "Size", "S"),
+    false,
+  );
+  assert.equal(
+    canSelectVariationOption(mixedStockProduct, { Colour: "Red", Size: "M" }, "Colour", "Blue"),
+    false,
+  );
+  assert.equal(
+    canSelectVariationOption(mixedStockProduct, { Colour: "Blue", Size: "M" }, "Colour", "Red"),
+    true,
+  );
 });

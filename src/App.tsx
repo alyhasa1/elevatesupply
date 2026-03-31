@@ -14,6 +14,9 @@ import Home from "./pages/storefront/Home";
 import Catalog from "./pages/storefront/Catalog";
 import OrderHistory from "./pages/storefront/OrderHistory";
 import ProductDetail from "./pages/storefront/ProductDetail";
+import Terms from "./pages/storefront/policies/Terms";
+import Privacy from "./pages/storefront/policies/Privacy";
+import Returns from "./pages/storefront/policies/Returns";
 import PayPalReturn from "./pages/PayPalReturn";
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
@@ -35,6 +38,9 @@ export default function App() {
             <Route index element={<Home />} />
             <Route path="/catalog" element={<Catalog />} />
             <Route path="/product/:trackerId/:listingId" element={<ProductDetail />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/returns" element={<Returns />} />
             <Route
               path="/orders"
               element={

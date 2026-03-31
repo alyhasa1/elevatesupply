@@ -1,5 +1,5 @@
 import { Outlet, Link } from "react-router-dom";
-import { Search, User, Package } from "lucide-react";
+import { Search, User, Package, Youtube, Instagram } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { TRACKERS } from "@/lib/catalog/trackers";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,9 +8,9 @@ export default function StorefrontLayout() {
   const { session, isAdmin, signOut } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#faf9f8] text-stone-900 font-sans">
+    <div className="min-h-screen flex flex-col bg-[#faf9f8] text-stone-900 font-sans overflow-x-hidden">
       <div className="bg-rose-950 text-rose-100/80 text-xs py-2.5 font-medium tracking-wide">
-        <div className="container mx-auto px-4 flex justify-between items-center">
+        <div className="container max-w-7xl mx-auto px-4 flex justify-between items-center">
           <div className="flex space-x-6">
             <span className="hidden sm:inline">
               Elevate Supply
@@ -40,14 +40,14 @@ export default function StorefrontLayout() {
       </div>
 
       <header className="bg-white border-b border-stone-200 sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-5 flex items-center justify-between gap-8">
+        <div className="container max-w-7xl mx-auto px-4 py-5 flex items-center justify-between gap-8">
           <Link to="/" className="flex items-center space-x-3 shrink-0 group">
-            <div className="w-9 h-9 bg-rose-900 rounded-lg flex items-center justify-center shadow-lg shadow-rose-900/20 group-hover:bg-rose-800 transition-colors">
-              <Package className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-2xl font-bold tracking-tight text-stone-900">
-              Elevate<span className="text-rose-800">.</span>
-            </span>
+            <img
+              src="/logo.png"
+              alt="Elevate Supply"
+              className="h-10 w-auto object-contain"
+              onError={(e) => { e.currentTarget.style.display = "none"; e.currentTarget.insertAdjacentHTML("afterend", '<span class="text-lg font-bold text-stone-900">Elevate Supply</span>'); }}
+            />
           </Link>
 
           <div className="flex-1 max-w-2xl relative hidden md:block">
@@ -102,7 +102,7 @@ export default function StorefrontLayout() {
           </div>
         </div>
 
-        <div className="container mx-auto px-4">
+        <div className="container max-w-7xl mx-auto px-4">
           <nav className="flex items-center space-x-8 py-3 overflow-x-auto no-scrollbar border-t border-stone-100">
             <Link to="/catalog" className="text-sm font-semibold text-stone-900 hover:text-rose-800 whitespace-nowrap transition-colors">
               All Products
@@ -126,20 +126,28 @@ export default function StorefrontLayout() {
         <Outlet />
       </main>
 
-      <footer className="bg-stone-950 text-stone-400 py-12 mt-12 border-t border-stone-900">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <footer className="bg-stone-950 text-stone-400 py-12 mt-auto border-t border-stone-900">
+        <div className="container max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center space-x-3 mb-4 group">
-              <div className="w-9 h-9 bg-rose-900 rounded-lg flex items-center justify-center shadow-lg shadow-rose-900/20 group-hover:bg-rose-800 transition-colors">
-                <Package className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-2xl font-bold tracking-tight text-white">
-                Elevate<span className="text-rose-600">.</span>
-              </span>
+              <img
+                src="/logo.png"
+                alt="Elevate Supply"
+                className="h-10 w-auto object-contain"
+                onError={(e) => { e.currentTarget.style.display = "none"; e.currentTarget.insertAdjacentHTML("afterend", '<span class="text-lg font-bold text-white">Elevate Supply</span>'); }}
+              />
             </Link>
-            <p className="text-sm mb-8 max-w-sm leading-relaxed text-stone-400">
-              Your premium dropshipping and fulfilment network. Start selling and let us handle the logistics.
+            <p className="text-sm mb-6 max-w-sm leading-relaxed text-stone-400">
+              Operated by Elevate Commerce Pvt Ltd. We provide online ecommerce and fulfilment using a dropshipping and distributed sourcing model.
             </p>
+            <div className="flex gap-4">
+              <a href="https://www.youtube.com/@ElevateComerce" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-400 hover:bg-rose-900 hover:text-rose-400 hover:border-rose-800 transition-all">
+                <Youtube className="w-5 h-5" />
+              </a>
+              <a href="https://www.instagram.com/ecommerceyasir/" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-400 hover:bg-rose-900 hover:text-rose-400 hover:border-rose-800 transition-all">
+                <Instagram className="w-5 h-5" />
+              </a>
+            </div>
           </div>
 
           <div>
@@ -164,19 +172,24 @@ export default function StorefrontLayout() {
                 </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-rose-400 transition-colors">
+                <Link to="/terms" className="hover:text-rose-400 transition-colors">
                   Terms & Conditions
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-rose-400 transition-colors">
+                <Link to="/privacy" className="hover:text-rose-400 transition-colors">
                   Privacy Policy
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link to="/returns" className="hover:text-rose-400 transition-colors">
+                  Returns & Refunds
+                </Link>
               </li>
             </ul>
           </div>
         </div>
-        <div className="container mx-auto px-4 mt-12 pt-6 border-t border-stone-900 text-xs flex flex-col md:flex-row justify-between items-center text-stone-500">
+        <div className="container max-w-7xl mx-auto px-4 mt-12 pt-6 border-t border-stone-900 text-xs flex flex-col md:flex-row justify-between items-center text-stone-500">
           <p>&copy; {new Date().getFullYear()} Elevate Supply Ltd. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0 font-medium tracking-wide">
             <span>UK Dropshipping</span>

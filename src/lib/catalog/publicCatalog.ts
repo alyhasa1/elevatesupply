@@ -118,17 +118,21 @@ export function buildPublicCatalogPage(
 }
 
 export function buildHomeCatalogPayload(snapshot: CatalogSnapshot): HomeCatalogPayload {
-  const featuredProducts = snapshot.products.slice(0, 6);
-  const recentProducts = snapshot.products.filter((product) => isUpdatedWithinHours(product, 24));
-  const fallbackPool = snapshot.products.filter((product) => !featuredProducts.some((entry) => entry.id === product.id));
-  const secondaryProducts = [...recentProducts, ...fallbackPool].filter(
+  // Textile stock first, then fill with other trackers to ensure enough cards
+  const textileProducts = snapshot.products.filter((p) => p.trackerId === "tims_textile");
+  const otherProducts = snapshot.products.filter((p) => p.trackerId !== "tims_textile");
+  const featuredProducts = [...textileProducts, ...otherProducts].slice(0, 30);
+
+  const remaining = snapshot.products.filter((product) => !featuredProducts.some((entry) => entry.id === product.id));
+  const recentProducts = remaining.filter((product) => isUpdatedWithinHours(product, 24));
+  const secondaryProducts = [...recentProducts, ...remaining].filter(
     (product, index, array) => array.findIndex((entry) => entry.id === product.id) === index,
   );
 
   return {
     trackers: snapshot.trackers,
     featuredProducts: featuredProducts.map((product) => toPublicCatalogProduct(product)),
-    recentProducts: secondaryProducts.slice(0, 6).map((product) => toPublicCatalogProduct(product)),
+    recentProducts: secondaryProducts.slice(0, 30).map((product) => toPublicCatalogProduct(product)),
     liveCount: snapshot.products.filter((product) => product.availability === "in_stock").length,
     updatedAt: snapshot.updatedAt,
   };

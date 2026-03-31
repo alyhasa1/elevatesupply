@@ -73,8 +73,8 @@ export default function Catalog() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f8] pt-12 pb-8 sm:pt-16">
-      <div className="container mx-auto space-y-2 px-6">
+    <div className="bg-[#faf9f8] py-8 sm:py-12">
+      <div className="container mx-auto space-y-6 px-4">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <h1 className="mb-3 text-3xl font-semibold text-stone-900 sm:text-4xl">Our Stock</h1>
@@ -153,32 +153,13 @@ export default function Catalog() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-4 text-sm text-stone-500 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            {status === "ready"
+        {status === "ready" && (
+          <div className="text-sm text-stone-500">
+            {data.total > 0
               ? `Showing ${visibleRange.start}-${visibleRange.end} of ${data.total} products`
-              : "Preparing catalog page..."}
+              : "No products found"}
           </div>
-          <div className="flex items-center gap-2 sm:justify-end">
-            <Button
-              variant="outline"
-              disabled={!data.hasPreviousPage || status === "loading"}
-              onClick={() => updateParams({ page: String(Math.max(1, data.page - 1)) })}
-            >
-              Previous
-            </Button>
-            <div className="min-w-[120px] text-center font-medium text-stone-700">
-              Page {data.page} of {data.totalPages}
-            </div>
-            <Button
-              variant="outline"
-              disabled={!data.hasNextPage || status === "loading"}
-              onClick={() => updateParams({ page: String(Math.min(data.totalPages, data.page + 1)) })}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+        )}
 
         {status === "loading" && <div className="text-stone-500">Loading catalog...</div>}
         {status === "error" && <div className="text-rose-700">{error || "Catalog could not be loaded."}</div>}
@@ -194,6 +175,33 @@ export default function Catalog() {
         {status === "ready" && data.products.length === 0 && (
           <div className="rounded-2xl border border-dashed border-stone-300 bg-white px-6 py-20 text-center text-stone-500">
             No products match the current tracker, availability, or search filter.
+          </div>
+        )}
+
+        {status === "ready" && data.totalPages > 1 && (
+          <div className="flex flex-col gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-4 text-sm text-stone-500 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              Showing {visibleRange.start}-{visibleRange.end} of {data.total} products
+            </div>
+            <div className="flex items-center gap-2 sm:justify-end">
+              <Button
+                variant="outline"
+                disabled={!data.hasPreviousPage}
+                onClick={() => updateParams({ page: String(Math.max(1, data.page - 1)) })}
+              >
+                Previous
+              </Button>
+              <div className="min-w-[120px] text-center font-medium text-stone-700">
+                Page {data.page} of {data.totalPages}
+              </div>
+              <Button
+                variant="outline"
+                disabled={!data.hasNextPage}
+                onClick={() => updateParams({ page: String(Math.min(data.totalPages, data.page + 1)) })}
+              >
+                Next
+              </Button>
+            </div>
           </div>
         )}
       </div>

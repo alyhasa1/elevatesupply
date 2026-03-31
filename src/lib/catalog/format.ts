@@ -1,5 +1,7 @@
 import type { Availability, CatalogProduct } from "./types";
 
+export type DetailAvailability = Availability | "partial_stock";
+
 const currencyAliases: Record<string, string> = {
   "£": "GBP",
   gbp: "GBP",
@@ -27,10 +29,33 @@ export function formatCurrency(value: number, currency: string = "GBP"): string 
   }).format(value);
 }
 
-export function getAvailabilityLabel(availability: Availability): string {
+export function getProductDetailAvailability(
+  product: Pick<CatalogProduct, "availability" | "variations">,
+): DetailAvailability {
+  if (product.availability === "ended") {
+    return "ended";
+  }
+
+  if (product.variations.length === 0) {
+    return product.availability;
+  }
+
+  const hasAvailableVariation = product.variations.some((variation) => variation.availability === "in_stock");
+  const hasUnavailableVariation = product.variations.some((variation) => variation.availability !== "in_stock");
+
+  if (hasAvailableVariation && hasUnavailableVariation) {
+    return "partial_stock";
+  }
+
+  return hasAvailableVariation ? "in_stock" : "out_of_stock";
+}
+
+export function getAvailabilityLabel(availability: DetailAvailability): string {
   switch (availability) {
     case "ended":
       return "Ended";
+    case "partial_stock":
+      return "Partial stock";
     case "out_of_stock":
       return "Out of stock";
     case "in_stock":

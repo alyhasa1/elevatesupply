@@ -158,7 +158,7 @@ export default function OrderHistory() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f8] pt-24 pb-16">
+    <div className="bg-[#faf9f8] pt-10 pb-8 sm:pt-14 sm:pb-12">
       <div className="container mx-auto px-4 space-y-8 max-w-6xl">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
           <div>

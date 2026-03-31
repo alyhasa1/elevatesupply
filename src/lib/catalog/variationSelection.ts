@@ -35,6 +35,10 @@ function scoreVariation(
   return score;
 }
 
+function isVariationInStock(variation: CatalogVariation): boolean {
+  return variation.availability === "in_stock";
+}
+
 export function buildVariationOptionGroups(variations: CatalogVariation[]): VariationOptionGroup[] {
   const groups = new Map<string, Set<string>>();
 
@@ -66,7 +70,7 @@ export function resolveVariationSelection(
 
   for (const variation of product.variations) {
     const score = scoreVariation(variation, desiredOptions, preferredKey);
-    if (score > bestScore) {
+    if (score > bestScore || (score === bestScore && isVariationInStock(variation) && !isVariationInStock(bestVariation))) {
       bestVariation = variation;
       bestScore = score;
     }
@@ -76,4 +80,29 @@ export function resolveVariationSelection(
     variation: bestVariation,
     selectedOptions: extractSelectableOptions(bestVariation),
   };
+}
+
+export function canSelectVariationOption(
+  product: CatalogProduct,
+  desiredOptions: Record<string, string>,
+  key: string,
+  value: string,
+): boolean {
+  if (product.availability === "ended" || product.variations.length === 0) {
+    return false;
+  }
+
+  const resolvedSelection = resolveVariationSelection(
+    product,
+    {
+      ...desiredOptions,
+      [key]: value,
+    },
+    key,
+  );
+
+  return (
+    resolvedSelection.selectedOptions[key] === value &&
+    resolvedSelection.variation.availability === "in_stock"
+  );
 }
