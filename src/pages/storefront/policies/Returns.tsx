@@ -1,6 +1,17 @@
+import SEO, { buildBreadcrumbSchema } from "@/components/SEO";
+
 export default function Returns() {
   return (
     <div className="bg-[#faf9f8] py-8 sm:py-12">
+      <SEO
+        title="Returns & Refunds"
+        description="Refund, returns, and cancellation policy for Elevate Supply. Learn about your consumer rights, return process, and how to request a refund."
+        canonical="/returns"
+        jsonLd={buildBreadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Returns & Refunds", url: "/returns" },
+        ])}
+      />
       <div className="container max-w-4xl mx-auto px-4 bg-white p-8 rounded-2xl shadow-sm border border-stone-100">
         <div className="prose prose-stone max-w-none">
           <h1 className="text-3xl font-bold mb-8">REFUND, RETURNS AND CANCELLATION POLICY</h1>

@@ -62,7 +62,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <div className="flex items-center gap-1.5 text-[10px] font-medium text-stone-500">
             <div
               className={`w-1.5 h-1.5 rounded-full ${
-                product.availability === "in_stock" ? "bg-[#00c885]" : "bg-orange-500"
+                product.availability === "in_stock" ? "bg-[#00c885]" : "bg-red-500"
               }`}
             ></div>
             {getAvailabilityLabel(product.availability)}

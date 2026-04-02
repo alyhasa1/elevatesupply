@@ -4,6 +4,7 @@ import { ArrowRight, Search, ShoppingCart, TrendingUp, Truck } from "lucide-reac
 
 import { CategoryCard } from "@/components/CategoryCard";
 import { ProductCard } from "@/components/ProductCard";
+import SEO, { buildOrganizationSchema, buildWebSiteSchema, buildFAQSchema } from "@/components/SEO";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCatalogPage, useHomeCatalog } from "@/lib/catalog/publicHooks";
@@ -41,6 +42,27 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
+      <SEO
+        canonical="/"
+        jsonLd={[
+          buildOrganizationSchema(),
+          buildWebSiteSchema(),
+          buildFAQSchema([
+            {
+              question: "What is Elevate Supply?",
+              answer: "Elevate Supply is a UK wholesale dropshipping platform that helps dropshippers sell inventory on their own platforms with automated stock and price syncing, plus reliable fulfilment within 2 working days.",
+            },
+            {
+              question: "How does dropshipping work with Elevate Supply?",
+              answer: "Browse our live catalog, list products on your selling platform, receive orders from your customers, and we handle picking, packing, and shipping directly to your customer with status tracking.",
+            },
+            {
+              question: "How fast is Elevate Supply fulfilment?",
+              answer: "We provide reliable fulfilment within 2 working days, with status tracking on every order.",
+            },
+          ]),
+        ]}
+      />
       <section className="relative flex min-h-[70vh] items-center overflow-hidden bg-stone-950 text-white">
         <div className="absolute inset-0 bg-[url('/hero.png')] bg-cover bg-center bg-no-repeat" />
         <div className="absolute inset-0 bg-gradient-to-r from-stone-950/80 via-stone-950/50 to-transparent" />

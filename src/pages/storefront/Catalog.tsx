@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ProductCard } from "@/components/ProductCard";
+import SEO, { buildBreadcrumbSchema } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCatalogPage } from "@/lib/catalog/publicHooks";
@@ -72,8 +73,23 @@ export default function Catalog() {
     setSearchParams(next);
   };
 
+  const trackerName = tracker !== "all" ? TRACKERS.find((t) => t.id === tracker)?.name : undefined;
+  const pageTitle = trackerName ? `${trackerName} — Catalog` : "Catalog";
+  const pageDescription = trackerName
+    ? `Browse ${trackerName} products on Elevate Supply. Live UK wholesale dropshipping stock with real-time pricing and availability.`
+    : "Browse our full catalog of UK wholesale dropshipping products. Live stock with real-time pricing, availability, and reliable 2-day fulfilment.";
+
   return (
     <div className="bg-[#faf9f8] py-8 sm:py-12">
+      <SEO
+        title={pageTitle}
+        description={pageDescription}
+        canonical="/catalog"
+        jsonLd={buildBreadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Catalog", url: "/catalog" },
+        ])}
+      />
       <div className="container mx-auto space-y-6 px-4">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">

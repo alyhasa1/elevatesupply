@@ -1,6 +1,17 @@
+import SEO, { buildBreadcrumbSchema } from "@/components/SEO";
+
 export default function Privacy() {
   return (
     <div className="bg-[#faf9f8] py-8 sm:py-12">
+      <SEO
+        title="Privacy Policy"
+        description="Learn how Elevate Supply collects, uses, and protects your personal data. Privacy policy for elevatesupply.uk, operated by Elevate Commerce Pvt Ltd."
+        canonical="/privacy"
+        jsonLd={buildBreadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Privacy Policy", url: "/privacy" },
+        ])}
+      />
       <div className="container max-w-4xl mx-auto px-4 bg-white p-8 rounded-2xl shadow-sm border border-stone-100">
         <div className="prose prose-stone max-w-none">
           <h1 className="text-3xl font-bold mb-8">PRIVACY POLICY</h1>

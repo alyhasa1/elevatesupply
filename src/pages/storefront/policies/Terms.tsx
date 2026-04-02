@@ -1,8 +1,18 @@
 import { Link } from "react-router-dom";
+import SEO, { buildBreadcrumbSchema } from "@/components/SEO";
 
 export default function Terms() {
   return (
     <div className="bg-[#faf9f8] py-8 sm:py-12">
+      <SEO
+        title="Terms & Conditions"
+        description="Read the terms and conditions for using Elevate Supply, a UK wholesale dropshipping platform operated by Elevate Commerce Pvt Ltd."
+        canonical="/terms"
+        jsonLd={buildBreadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Terms & Conditions", url: "/terms" },
+        ])}
+      />
       <div className="container max-w-4xl mx-auto px-4 bg-white p-8 rounded-2xl shadow-sm border border-stone-100">
         <div className="prose prose-stone max-w-none">
           <h1 className="text-3xl font-bold mb-8">TERMS AND CONDITIONS</h1>

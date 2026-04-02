@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, ExternalLink, ShieldCheck, Truck } from "lucide-react";
 
+import SEO, { buildBreadcrumbSchema, buildProductSchema } from "@/components/SEO";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { OrderFormModal } from "@/components/orders/OrderFormModal";
@@ -111,8 +112,34 @@ export default function ProductDetail() {
     );
   }
 
+  const productUrl = `/product/${product.trackerId}/${encodeURIComponent(product.listingId)}`;
+
   return (
     <div className="bg-white pt-10 pb-8 sm:pt-14 sm:pb-12">
+      <SEO
+        title={product.title}
+        description={product.description || `${product.title} — Available on Elevate Supply. UK wholesale dropshipping with 2-day fulfilment.`}
+        canonical={productUrl}
+        ogImage={product.image || undefined}
+        ogType="product"
+        jsonLd={[
+          buildProductSchema({
+            title: product.title,
+            description: product.description,
+            image: product.image,
+            price: selectedVariation.displayPrice,
+            currency: selectedVariation.currency,
+            availability: detailAvailability,
+            url: productUrl,
+          }),
+          buildBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Catalog", url: "/catalog" },
+            { name: product.trackerName, url: `/catalog?tracker=${product.trackerId}` },
+            { name: product.title, url: productUrl },
+          ]),
+        ]}
+      />
       <div className="container mx-auto max-w-7xl px-4">
         <nav className="mb-3 flex flex-wrap items-center gap-1.5 text-xs sm:text-sm font-medium text-stone-500">
           <Link to="/catalog" className="flex items-center gap-1 hover:text-orange-700">
