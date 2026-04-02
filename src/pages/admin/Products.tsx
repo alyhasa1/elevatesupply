@@ -223,7 +223,7 @@ export default function Products() {
         <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">{message}</div>
       ) : null}
       {status === "loading" && <div className="text-slate-500">Loading catalog page...</div>}
-      {status === "error" && <div className="text-rose-700">{error || "Catalog could not be loaded."}</div>}
+      {status === "error" && <div className="text-orange-700">{error || "Catalog could not be loaded."}</div>}
       {isFetching && status === "ready" && <div className="text-slate-500">Updating current page...</div>}
 
       <div className="space-y-4">

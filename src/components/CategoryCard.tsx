@@ -19,7 +19,7 @@ export function CategoryCard({ category, isLarge = false, isWide = false }: Cate
   return (
     <Link
       to={`/catalog?tracker=${category.id}`}
-      className={`group flex h-full min-h-[280px] relative overflow-hidden rounded-2xl ${spanClasses} shadow-sm hover:shadow-2xl hover:shadow-rose-900/20 transition-all duration-500 border border-stone-200 ${
+      className={`group flex h-full min-h-[280px] relative overflow-hidden rounded-2xl ${spanClasses} shadow-sm hover:shadow-2xl hover:shadow-orange-900/20 transition-all duration-500 border border-stone-200 ${
         hasBg ? "bg-stone-900" : "bg-gradient-to-br from-stone-800 via-stone-900 to-stone-950"
       }`}
     >

@@ -255,7 +255,7 @@ export default function Terms() {
           </ul>
 
           <h2 className="text-xl font-semibold mt-8 mb-4">23. Privacy and Data Protection</h2>
-          <p>Our collection and use of personal data is governed by our <Link to="/privacy" className="text-rose-700 hover:underline">Privacy Policy</Link>.</p>
+          <p>Our collection and use of personal data is governed by our <Link to="/privacy" className="text-orange-700 hover:underline">Privacy Policy</Link>.</p>
 
           <h2 className="text-xl font-semibold mt-8 mb-4">24. Changes to These Terms</h2>
           <p>We may update these Terms from time to time. The version displayed on the website at the time of your order will apply to that order unless the law requires otherwise.</p>

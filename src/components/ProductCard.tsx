@@ -31,14 +31,14 @@ export function ProductCard({ product }: ProductCardProps) {
       <CardContent className="p-4 pt-3 flex-1 flex flex-col">
         <div className="flex justify-between items-center mb-1.5 gap-2">
           <span className="text-[10px] text-stone-500 font-medium">{product.listingId}</span>
-          <span className="text-[9px] font-bold tracking-wider text-rose-700 uppercase text-right truncate">
+          <span className="text-[9px] font-bold tracking-wider text-orange-700 uppercase text-right truncate">
             {product.trackerName}
           </span>
         </div>
 
         <Link
           to={`/product/${product.trackerId}/${encodeURIComponent(product.listingId)}`}
-          className="hover:text-rose-700 transition-colors"
+          className="hover:text-orange-700 transition-colors"
         >
           <h3 className="text-sm font-semibold text-stone-900 mb-3 line-clamp-2 leading-snug">
             {product.title}
@@ -62,7 +62,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <div className="flex items-center gap-1.5 text-[10px] font-medium text-stone-500">
             <div
               className={`w-1.5 h-1.5 rounded-full ${
-                product.availability === "in_stock" ? "bg-[#00c885]" : "bg-rose-500"
+                product.availability === "in_stock" ? "bg-[#00c885]" : "bg-orange-500"
               }`}
             ></div>
             {getAvailabilityLabel(product.availability)}

@@ -252,7 +252,7 @@ export default function OrderHistory() {
                           <span className="rounded-full bg-stone-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">
                             {order.status}
                           </span>
-                          <span className="rounded-full bg-rose-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-rose-700">
+                          <span className="rounded-full bg-orange-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-orange-700">
                             {PAYMENT_LABELS[order.payment_status] || order.payment_status}
                           </span>
                         </div>
@@ -308,7 +308,7 @@ export default function OrderHistory() {
                   {isUnpaid ? (
                     <div className="flex justify-end">
                       <Button
-                        className="bg-rose-600 hover:bg-rose-500"
+                        className="bg-orange-600 hover:bg-orange-500"
                         disabled={isPaying}
                         onClick={() => {
                           void handlePayNow(order);

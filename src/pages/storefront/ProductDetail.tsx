@@ -115,11 +115,11 @@ export default function ProductDetail() {
     <div className="bg-white pt-10 pb-8 sm:pt-14 sm:pb-12">
       <div className="container mx-auto max-w-7xl px-4">
         <nav className="mb-3 flex flex-wrap items-center gap-1.5 text-xs sm:text-sm font-medium text-stone-500">
-          <Link to="/catalog" className="flex items-center gap-1 hover:text-rose-700">
+          <Link to="/catalog" className="flex items-center gap-1 hover:text-orange-700">
             <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Catalog
           </Link>
           <span className="text-stone-300">/</span>
-          <Link to={`/catalog?tracker=${product.trackerId}`} className="hover:text-rose-700 truncate max-w-[100px] sm:max-w-none">
+          <Link to={`/catalog?tracker=${product.trackerId}`} className="hover:text-orange-700 truncate max-w-[100px] sm:max-w-none">
             {product.trackerName}
           </Link>
           <span className="text-stone-300 hidden sm:inline">/</span>
@@ -139,7 +139,7 @@ export default function ProductDetail() {
                       type="button"
                       onClick={() => setActiveImage(image)}
                       className={`shrink-0 w-full aspect-square overflow-hidden rounded-lg border-2 transition-all ${
-                        activeImage === image ? "border-rose-400 shadow-sm" : "border-transparent hover:border-stone-200"
+                        activeImage === image ? "border-orange-400 shadow-sm" : "border-transparent hover:border-stone-200"
                       }`}
                     >
                       <img src={image} alt="" className="h-full w-full object-contain" referrerPolicy="no-referrer" />
@@ -171,7 +171,7 @@ export default function ProductDetail() {
                     type="button"
                     onClick={() => setActiveImage(image)}
                     className={`shrink-0 w-16 h-16 rounded-lg border-2 transition-all overflow-hidden ${
-                      activeImage === image ? "border-rose-400 shadow-sm" : "border-transparent hover:border-stone-200"
+                      activeImage === image ? "border-orange-400 shadow-sm" : "border-transparent hover:border-stone-200"
                     }`}
                   >
                     <img src={image} alt="" className="h-full w-full object-contain" referrerPolicy="no-referrer" />
@@ -236,7 +236,7 @@ export default function ProductDetail() {
                           setSelectedOptions(nextSelection.selectedOptions);
                           setSelectedVariationId(nextSelection.variation.id);
                         }}
-                        className="w-full appearance-none rounded-lg sm:rounded-xl border border-stone-200 bg-white px-3 sm:px-4 py-2 sm:py-3 pr-8 sm:pr-10 text-xs sm:text-sm font-medium text-stone-700 focus:border-rose-400 focus:outline-none focus:ring-1 focus:ring-rose-400"
+                        className="w-full appearance-none rounded-lg sm:rounded-xl border border-stone-200 bg-white px-3 sm:px-4 py-2 sm:py-3 pr-8 sm:pr-10 text-xs sm:text-sm font-medium text-stone-700 focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
                       >
                         {group.values.map((value) => {
                           const optionIsSelectable = canSelectVariationOption(
@@ -282,7 +282,7 @@ export default function ProductDetail() {
                         disabled={!variationIsSelectable}
                         className={`flex w-full flex-col gap-1.5 rounded-md sm:rounded-lg border px-2.5 sm:px-3 py-2 sm:py-2.5 text-left transition-colors sm:flex-row sm:items-center sm:justify-between ${
                           selectedVariation.id === variation.id
-                            ? "border-rose-300 bg-rose-50"
+                            ? "border-orange-300 bg-orange-50"
                             : "border-stone-200 bg-stone-50"
                         } ${variationIsSelectable ? "" : "cursor-not-allowed opacity-60"}`}
                         onClick={() => {
@@ -315,7 +315,7 @@ export default function ProductDetail() {
               {session ? (
                 <Button
                   size="lg"
-                  className="h-11 sm:h-12 w-full rounded-full bg-rose-600 text-sm sm:text-base font-bold text-white hover:bg-rose-700"
+                  className="h-11 sm:h-12 w-full rounded-full bg-orange-600 text-sm sm:text-base font-bold text-white hover:bg-orange-700"
                   onClick={() => setCheckoutOpen(true)}
                   disabled={selectedAvailability !== "in_stock" || product.availability === "ended"}
                 >
@@ -323,7 +323,7 @@ export default function ProductDetail() {
                 </Button>
               ) : (
                 <Link to="/auth/sign-in">
-                  <Button size="lg" className="h-11 sm:h-12 w-full rounded-full bg-rose-600 text-sm sm:text-base font-bold text-white hover:bg-rose-700">
+                  <Button size="lg" className="h-11 sm:h-12 w-full rounded-full bg-orange-600 text-sm sm:text-base font-bold text-white hover:bg-orange-700">
                     Sign In To Checkout
                   </Button>
                 </Link>

@@ -18,7 +18,7 @@ function AuthShell({
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(190,24,93,0.12),_transparent_45%),linear-gradient(135deg,#0c0a09,#1c1917)] text-white flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-xl rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl overflow-hidden">
         <div className="p-8 sm:p-10 border-b border-white/10">
-          <Link to="/" className="text-xs uppercase tracking-[0.35em] text-rose-300 font-semibold">
+          <Link to="/" className="text-xs uppercase tracking-[0.35em] text-orange-300 font-semibold">
             Elevate Supply
           </Link>
           <h1 className="text-3xl font-semibold tracking-tight mt-4">{title}</h1>
@@ -51,7 +51,7 @@ function AuthMessage({ value }: { value: string | null }) {
 }
 
 const inputClassName =
-  "w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-400/50";
+  "w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-400/50";
 
 export function SignInPage() {
   const { signIn, session, initializing, isAdmin } = useAuth();
@@ -118,7 +118,7 @@ export function SignInPage() {
         <button
           type="submit"
           disabled={busy}
-          className="w-full rounded-2xl bg-rose-600 hover:bg-rose-500 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-3 text-sm font-semibold text-white transition-colors"
+          className="w-full rounded-2xl bg-orange-600 hover:bg-orange-500 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-3 text-sm font-semibold text-white transition-colors"
         >
           {busy ? "Signing in…" : "Sign in"}
         </button>
@@ -211,7 +211,7 @@ export function CreateAccountPage() {
         <button
           type="submit"
           disabled={busy}
-          className="w-full rounded-2xl bg-rose-600 hover:bg-rose-500 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-3 text-sm font-semibold text-white transition-colors"
+          className="w-full rounded-2xl bg-orange-600 hover:bg-orange-500 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-3 text-sm font-semibold text-white transition-colors"
         >
           {busy ? "Creating account…" : "Create account"}
         </button>
@@ -268,7 +268,7 @@ export function ForgotPasswordPage() {
         <button
           type="submit"
           disabled={busy || submitted}
-          className="w-full rounded-2xl bg-rose-600 hover:bg-rose-500 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-3 text-sm font-semibold text-white transition-colors"
+          className="w-full rounded-2xl bg-orange-600 hover:bg-orange-500 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-3 text-sm font-semibold text-white transition-colors"
         >
           {submitted ? "Link sent" : busy ? "Sending…" : "Send reset link"}
         </button>
@@ -402,7 +402,7 @@ export function ResetPasswordPage() {
           <button
             type="submit"
             disabled={busy}
-            className="w-full rounded-2xl bg-rose-600 hover:bg-rose-500 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-3 text-sm font-semibold text-white transition-colors"
+            className="w-full rounded-2xl bg-orange-600 hover:bg-orange-500 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-3 text-sm font-semibold text-white transition-colors"
           >
             {busy ? "Saving…" : "Save new password"}
           </button>

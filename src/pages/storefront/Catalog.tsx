@@ -127,7 +127,7 @@ export default function Catalog() {
                   onClick={() => updateParams({ availability: filter.value === "all" ? null : filter.value }, true)}
                   className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                     availability === filter.value
-                      ? "bg-rose-700 text-white"
+                      ? "bg-orange-700 text-white"
                       : "border border-stone-200 bg-stone-50 text-stone-600 hover:border-stone-300"
                   }`}
                 >
@@ -162,7 +162,7 @@ export default function Catalog() {
         )}
 
         {status === "loading" && <div className="text-stone-500">Loading catalog...</div>}
-        {status === "error" && <div className="text-rose-700">{error || "Catalog could not be loaded."}</div>}
+        {status === "error" && <div className="text-orange-700">{error || "Catalog could not be loaded."}</div>}
 
         {status === "ready" && data.products.length > 0 && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 xl:grid-cols-6">

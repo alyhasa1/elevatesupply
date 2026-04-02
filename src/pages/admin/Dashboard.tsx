@@ -33,7 +33,7 @@ export default function Dashboard() {
         <p className="text-slate-500">Inventory-only view of the worker-backed Elevate Supply catalog.</p>
       </div>
 
-      {status === "error" && <div className="text-sm text-rose-700">{error || "Catalog could not be loaded."}</div>}
+      {status === "error" && <div className="text-sm text-orange-700">{error || "Catalog could not be loaded."}</div>}
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         <Card>
